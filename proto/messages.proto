@@ -3,6 +3,7 @@
 
 syntax = "proto2";
 
-message SimpleMessage {
+message Simple {
     required int32 lucky_number = 1;
+    required string message = 2;
 }
