@@ -17,22 +17,25 @@
 #define FOOTER 0xFF
 #define ESCAPE 0xFE
 
+#define SIMPLETYPE 0x01;
+
 
 Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
 
-uint8_t inputBuffer[512];
+uint8_t inputBuffer[128];
+uint8_t outputBuffer[128];
 uint8_t readBuffer[64];
 uint8_t bufferPos = 1;
-bool status;
 bool escaped;
 Simple message = Simple_init_zero;
 int available = 0;
 int fails = 0;
 int success = 0;
-bool updateRequired = false;
+bool updateRequired = true;
+int cnt = 0;
 
 void setup() {
-  Serial.begin(14400);
+  Serial.begin(9600);
   while (!Serial);
   // Serial.println("Initializtion Stating"); 
   tft.begin();
@@ -40,43 +43,73 @@ void setup() {
   tft.fillScreen(ILI9340_BLACK);
   tft.setCursor(0, 0);
   tft.setTextColor(ILI9340_WHITE);
-  tft.setTextSize(1);
+  tft.setTextSize(2);
   tft.println("Initialization");
   
 }
 
 void display() {
-  tft.fillRect(0, 0, 160, 10, 0x0000);
+  tft.fillRect(0, 0, 160, 15, 0x0000);
   tft.setCursor(0, 0);
   tft.println(message.message);
 
-  tft.fillRect(0, 60, 30, 10, 0x0000);
+  tft.fillRect(0, 60, 45, 15, 0x0000);
   tft.setCursor(0, 60);
   tft.println(message.lucky_number);
 
-  tft.fillRect(0, 70, 30, 10, ILI9340_RED);
-  tft.setCursor(0, 70);
+  tft.fillRect(0, 80, 45, 15, ILI9340_RED);
+  tft.setCursor(0, 80);
   tft.println(fails);
 
-  tft.fillRect(0, 80, 30, 10, ILI9340_GREEN);
-  tft.setCursor(0, 80);
+  tft.fillRect(0, 100, 45, 15, 0x04B0);
+  tft.setCursor(0, 100);
   tft.println(success);
 }
 
 void decode(uint8_t *buffer, size_t message_length) {
   uint8_t TYPE_ID = buffer[0];
   pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
-  status = pb_decode(&stream, Simple_fields, &message);
+  bool status = pb_decode(&stream, Simple_fields, &message);
   if (!status)
   {
     fails++;
   } else {
     success++;
   }
-
 }
 
-void loop(void) {
+
+void sendMessage() {
+  Simple message = {success, "Success"};
+  pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
+  bool status = pb_encode(&stream, Simple_fields, &message);
+  uint8_t encodedBuffer[128];
+  encodedBuffer[0] = HEADER;
+  encodedBuffer[1] = SIMPLETYPE;
+  int encodedBufferIndex = 2;
+  for (int outputBufferIndex = 0; outputBufferIndex < stream.bytes_written; outputBufferIndex++){
+    switch(outputBuffer[outputBufferIndex]){
+      case ESCAPE:
+        encodedBuffer[encodedBufferIndex] = ESCAPE;
+        encodedBufferIndex++;
+        break;
+      case HEADER:
+        encodedBuffer[encodedBufferIndex] = ESCAPE;
+        encodedBufferIndex++;
+        break;
+      case FOOTER:
+        encodedBuffer[encodedBufferIndex] = ESCAPE;
+        encodedBufferIndex++;
+        break;
+    }
+    encodedBuffer[encodedBufferIndex] = outputBuffer[outputBufferIndex];
+    encodedBufferIndex++;
+  }
+  encodedBuffer[encodedBufferIndex] = FOOTER;
+  Serial.write(encodedBuffer, encodedBufferIndex + 1);
+}
+
+bool readSerial() {
   available = Serial.available();
   if (available) {
     Serial.readBytes(readBuffer, available);
@@ -103,10 +136,23 @@ void loop(void) {
         }
       }
     }
+    return true;
   } else {
+    return false;
+  }
+}
+
+void update() {
+  updateRequired = false;
+  display();
+  sendMessage();
+  delay(1000);
+}
+
+void loop(void) {
+  if (!readSerial()) {
     if (updateRequired) {
-      updateRequired = false;
-      display();
+      update();
     }
   }
 }

@@ -10,7 +10,7 @@ class DoIt(object):
     ESCAPE = 0xFE
 
 
-    def __init__(self, port, baud=14400):
+    def __init__(self, port, baud=9600):
         self.connection = ArduinoCommunicator(port, baud)
         self.connection.start()
         time.sleep(5)
@@ -18,7 +18,7 @@ class DoIt(object):
     def go(self):
 
         for i in range(888, 899):
-            time.sleep(0.05)
+            time.sleep(4)
             print(i)
             message = SimpleMessage(i, str(time.ctime()))
             self.connection.send(message)
@@ -35,5 +35,5 @@ class DoIt(object):
     #     return out_bytes
 
 if __name__ == '__main__':
-    port = '/dev/ttyUSB2'
+    port = '/dev/ttyUSB0'
     DoIt(port).go()
