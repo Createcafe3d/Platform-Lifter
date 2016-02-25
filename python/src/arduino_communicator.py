@@ -53,7 +53,6 @@ class ArduinoCommunicator(Communicator, threading.Thread):
         if len(self.input_buffer):
             print("Read {} bytes".format(len(self.input_buffer)))
         for byte in self.input_buffer:
-            print '{:02x}:'.format(ord(byte)),
             if self.is_identifier:
                 self.is_identifier = False
                 self.current_message_identifier = ord(byte)
@@ -68,7 +67,6 @@ class ArduinoCommunicator(Communicator, threading.Thread):
                     self.is_identifier = True
                 elif ord(byte) == self.FOOTER:
                     self._decode(self.current_message_identifier, self.current_message)
-                    print('FOOTER')
                 else:
                     self.current_message += byte
         self.input_buffer = ""
