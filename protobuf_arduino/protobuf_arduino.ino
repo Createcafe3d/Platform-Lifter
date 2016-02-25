@@ -43,9 +43,6 @@ void displaySetup()
   tft.setCursor(0, 100);
   tft.println("success");
 
-  tft.setCursor(0, 120);
-  tft.println("status");
-
   tft.setCursor(0, 140);
   tft.println("bytes <-");
 
@@ -72,10 +69,6 @@ void display() {
   tft.fillRect(160, 100, 45, 15, 0x04B0);
   tft.setCursor(160, 100);
   tft.println(peachDuino->success());
-
-  tft.fillRect(160, 120, 45, 15, 0x02BB);
-  tft.setCursor(160, 120);
-  tft.println(Serial.available());
 
   tft.fillRect(160, 140, 55, 15, 0x28BB);
   tft.setCursor(160, 140);
