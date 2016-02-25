@@ -12,6 +12,15 @@
 
 #define SIMPLETYPE 0x01;
 
+struct Handler {
+  uint8_t typeId;
+  void (*handler)(void* message);
+};
+
+struct Handler g_handlers[32];
+int g_handler_count = 0;
+
+
 class PeachDuino
 {
   public:
@@ -25,9 +34,11 @@ class PeachDuino
       return readSerial();
     };
 
-    void sendMessage()
+    void sendMessage(Simple message)
     {
-      _sendMessage();
+      pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
+      bool status = pb_encode(&stream, Simple_fields, &message);
+      _sendBytes(stream);
     };
 
     int success()
@@ -40,13 +51,20 @@ class PeachDuino
       return _fails;
     };
 
+    void addHandler(unsigned int typeId, void (*handler)(void* message)) {
+      g_handlers[g_handler_count].typeId = typeId;
+      g_handlers[g_handler_count].handler = handler;
+      g_handler_count++;
+    }
+
     int recieved = 0;
     int sent = 0;
-    Simple message = Simple_init_zero;
+    // Simple message = Simple_init_zero;
 
   private:
-    uint8_t inputBuffer[128];
-    uint8_t outputBuffer[128];
+    uint8_t inputBuffer[64];
+
+    uint8_t outputBuffer[64];
     uint8_t readBuffer[64];
     uint8_t bufferPos = 1;
     bool escaped;
@@ -57,9 +75,23 @@ class PeachDuino
 
     void decode(uint8_t *buffer, size_t message_length) 
     {
-      uint8_t TYPE_ID = buffer[0];
+      uint8_t typeId = buffer[0];
+      bool status;
+      void *message;
       pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
-      bool status = pb_decode(&stream, Simple_fields, &message);
+      switch(typeId){
+        case 1:
+          Simple simpleMessage = Simple_init_zero;
+          message = &simpleMessage;
+          status = pb_decode(&stream, Simple_fields, message);
+          break;
+      }
+      for(int i=0; i < g_handler_count; i++) {
+        if (g_handlers[i].typeId == typeId) {
+          g_handlers[i].handler(message);
+        }
+      }
+
       if (!status)
       {
         _fails++;
@@ -68,11 +100,8 @@ class PeachDuino
       }
     }
 
-    void _sendMessage() {
-      Simple message = {_success, "Success"};
-      pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
-      bool status = pb_encode(&stream, Simple_fields, &message);
-      uint8_t encodedBuffer[128];
+    void _sendBytes(pb_ostream_t stream) {
+      uint8_t encodedBuffer[64];
       encodedBuffer[0] = HEADER;
       encodedBuffer[1] = SIMPLETYPE;
       int encodedBufferIndex = 2;

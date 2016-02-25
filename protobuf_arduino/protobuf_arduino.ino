@@ -2,6 +2,7 @@
 #include "SPI.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9340.h"
+#include "messages.pb.h"
 
 #include "peachduino.h"
 
@@ -18,9 +19,11 @@
 Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
 
 PeachDuino* peachDuino = new PeachDuino(Serial);
+Simple message;
 int loops = 0;
 
 void setup() {
+  peachDuino->addHandler(1, simpleHandler);
   Serial.begin(9600);
   tft.begin();
   tft.setRotation(3);
@@ -56,11 +59,11 @@ void displaySetup()
 void display() {
   tft.fillRect(0, 0, 320, 15, 0x0000);
   tft.setCursor(0, 0);
-  tft.println(peachDuino->message.message);
+  tft.println(message.message);
 
   tft.fillRect(160, 60, 45, 15, 0x0000);
   tft.setCursor(160, 60);
-  tft.println(peachDuino->message.lucky_number);
+  tft.println(message.lucky_number);
 
   tft.fillRect(160, 80, 45, 15, ILI9340_RED);
   tft.setCursor(160, 80);
@@ -70,28 +73,33 @@ void display() {
   tft.setCursor(160, 100);
   tft.println(peachDuino->success());
 
-  tft.fillRect(160, 140, 55, 15, 0x28BB);
+  tft.fillRect(160, 140, 70, 15, 0x28BB);
   tft.setCursor(160, 140);
   tft.println(peachDuino->recieved);
 
-  tft.fillRect(160, 160, 55, 15, 0x2DBB);
+  tft.fillRect(160, 160, 70, 15, 0x4DBB);
   tft.setCursor(160, 160);
   tft.println(peachDuino->sent);
 
-  tft.fillRect(160, 180, 160, 15, 0x46B0);
+  tft.fillRect(160, 180, 70, 15, 0x46B0);
   tft.setCursor(160, 180);
   tft.println(loops);
 }
 
+void simpleHandler(void* newMessage) {
+  message = *((Simple*)newMessage);
+}
+
 void update() {
   display();
-  peachDuino->sendMessage();
+  Simple message = {peachDuino->success(), "Success"};
+  peachDuino->sendMessage(message);
 }
 
 void loop(void) {
   loops++;
   peachDuino->process();
-  if (loops % 100 == 0){
+  if (loops % 1000 == 0){
       update();
   }
 }

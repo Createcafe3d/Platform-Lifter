@@ -16,22 +16,12 @@ class DoIt(object):
         time.sleep(3)
 
     def go(self):
-        for i in range(888, 899):
+        for i in range(0, 20):
             print(i)
             message = SimpleMessage(i, str(time.ctime()))
             self.connection.send(message)
             time.sleep(0.5)
         self.connection.close()
-
-    # def _encode(self, in_bytes):
-    #     print "-" * 30
-    #     print ":".join("{}".format(ord(c)) for c in in_bytes)
-    #     in_bytes = in_bytes.replace(chr(self.ESCAPE), chr(self.ESCAPE) + chr(self.ESCAPE))
-    #     in_bytes = in_bytes.replace(chr(self.HEADER), chr(self.ESCAPE) + chr(self.HEADER))
-    #     in_bytes = in_bytes.replace(chr(self.FOOTER), chr(self.ESCAPE) + chr(self.FOOTER))
-    #     out_bytes = chr(self.HEADER) + in_bytes + chr(self.FOOTER)
-    #     print ":".join("{}".format(ord(c)) for c in out_bytes)
-    #     return out_bytes
 
 if __name__ == '__main__':
     port = '/dev/ttyUSB0'

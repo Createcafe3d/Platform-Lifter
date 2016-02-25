@@ -27,6 +27,7 @@ class ArduinoCommunicator(Communicator, threading.Thread):
 
         self.input_buffer = ""
         self.current_message = ""
+        self.in_message = False
         self.input_escaped = False
         self.is_identifier = False
         self.current_message_identifier = ""
@@ -65,8 +66,14 @@ class ArduinoCommunicator(Communicator, threading.Thread):
                 elif ord(byte) == self.HEADER:
                     self.current_message = ""
                     self.is_identifier = True
+                    self.in_message = True
                 elif ord(byte) == self.FOOTER:
-                    self._decode(self.current_message_identifier, self.current_message)
+                    if self.in_message:
+                        try:
+                            self._decode(self.current_message_identifier, self.current_message)
+                        except:
+                            print("Failed to Decode")
+                    self.in_message = False
                 else:
                     self.current_message += byte
         self.input_buffer = ""
