@@ -13,15 +13,14 @@ class DoIt(object):
     def __init__(self, port, baud=9600):
         self.connection = ArduinoCommunicator(port, baud)
         self.connection.start()
-        time.sleep(5)
+        time.sleep(3)
 
     def go(self):
-
         for i in range(888, 899):
-            time.sleep(4)
             print(i)
             message = SimpleMessage(i, str(time.ctime()))
             self.connection.send(message)
+            time.sleep(0.5)
         self.connection.close()
 
     # def _encode(self, in_bytes):
