@@ -10,9 +10,17 @@
 #define FOOTER 0xFF
 #define ESCAPE 0xFE
 
-#define PRINTERSTATUSTYPE 51;
-#define DRIPRECORDEDTYPE 3;
-#define SETCURRENTHEIGHTTYPE 52;
+#define PRINTERSTATUSTYPE 51
+#define DRIPRECORDEDTYPE 3
+#define SETCURRENTHEIGHTTYPE 52
+
+class Wrap
+{
+  public:
+    void printerStatusHandler(void* newMessage);
+
+};
+
 
 struct Handler {
   uint8_t typeId;
@@ -23,6 +31,7 @@ struct Handler g_handlers[32];
 unsigned int g_handler_count = 0;
 
 
+
 class PeachDuino
 {
   public:
@@ -30,6 +39,13 @@ class PeachDuino
     {
       serial = &hw_serial;
     };
+
+    // void addHandler(unsigned int typeId, void (Wrap::* handler)(void* message))
+    // {
+    //   g_handlers[g_handler_count].typeId = typeId;
+    //   g_handlers[g_handler_count].wrapHandler = handler;
+    //   g_handler_count++;
+    // };
 
     bool process()
     {
@@ -60,14 +76,23 @@ class PeachDuino
       return _fails;
     };
 
-    void addHandler(unsigned int typeId, void (*handler)(void* message)) {
+    int recieved()
+    {
+      return _recieved;
+    };
+
+    int sent()
+    {
+      return _sent;
+    };
+
+    void addHandler(unsigned int typeId, void (*handler)(void* message))
+    {
       g_handlers[g_handler_count].typeId = typeId;
       g_handlers[g_handler_count].handler = handler;
       g_handler_count++;
-    }
+    };
 
-    unsigned long recieved = 0;
-    unsigned long sent = 0;
 
   private:
     uint8_t inputBuffer[64];
@@ -80,6 +105,8 @@ class PeachDuino
     int _success = 0;
     int available = 0;
     HardwareSerial* serial;
+    unsigned long _recieved = 0;
+    unsigned long _sent = 0;
 
     void decode(uint8_t *buffer, size_t message_length) 
     {
@@ -132,7 +159,7 @@ class PeachDuino
         encodedBufferIndex++;
       }
       encodedBuffer[encodedBufferIndex] = FOOTER;
-      sent = sent + encodedBufferIndex;
+      _sent = _sent + encodedBufferIndex;
       serial->write(encodedBuffer, encodedBufferIndex + 1);
     }
 
@@ -140,7 +167,7 @@ class PeachDuino
     {
       available = serial->available();
       if (available) {
-        recieved = recieved + available;
+        _recieved = _recieved + available;
         serial->readBytes(readBuffer, available);
         for (short i = 0; i < available; i++) {
           inputBuffer[bufferPos] = readBuffer[i];

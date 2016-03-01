@@ -113,11 +113,11 @@ void display() {
 
   tft.fillRect(160, 180, 120, 15, 0b1111100000000000);
   tft.setCursor(160, 180);
-  tft.println(peachDuino->recieved);
+  tft.println(peachDuino->recieved());
 
   tft.fillRect(160, 200, 120, 15, 0b0000001111000000);
   tft.setCursor(160, 200);
-  tft.println(peachDuino->sent);
+  tft.println(peachDuino->sent());
 
   tft.fillRect(160, 220, 120, 15, 0b0000000000011111);
   tft.setCursor(160, 220);
