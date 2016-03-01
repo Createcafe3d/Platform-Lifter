@@ -9,7 +9,7 @@ class SimplePeachDuino: public Wrap
     SimplePeachDuino(HardwareSerial &hw_serial)
     {
       _peachDuino= new PeachDuino(hw_serial);
-      _peachDuino->addHandler(PRINTERSTATUSTYPE, &this->printerStatusHandler);
+      _peachDuino->addHandler(PRINTERSTATUSTYPE, &Wrap::printerStatusHandler, this);
     };
 
     bool process()
@@ -59,13 +59,13 @@ class SimplePeachDuino: public Wrap
     // 2 - Waiting For Next Layer Height
     // 3 - Complete
 
-  private:
-    void printerStatusHandler(void* newMessage) {
+  // private:
+    virtual void printerStatusHandler(void* newMessage) {
         PrinterStatus printerStatusMessage = *((PrinterStatus*)newMessage);
         targetHeightMicrometer = printerStatusMessage.targetHeightMicrometer;
         currentHeightMicrometer = printerStatusMessage.currentHeightMicrometer;
         waitingForNextLayerHeight = printerStatusMessage.waitingForNextLayerHeight;
-        printStatus = 255;
+        printStatus = printerStatusMessage.status;
       };
 };
 

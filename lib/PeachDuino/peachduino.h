@@ -17,7 +17,7 @@
 class Wrap
 {
   public:
-    void printerStatusHandler(void* newMessage);
+    virtual void printerStatusHandler(void* newMessage);
 
 };
 
@@ -27,10 +27,17 @@ struct Handler {
   void (*handler)(void* message);
 };
 
-struct Handler g_handlers[32];
+struct WrapHandler {
+  uint8_t typeId;
+  void (Wrap::*handler)(void* message);
+  Wrap* ctx;
+};
+
+struct Handler g_handlers[8];
 unsigned int g_handler_count = 0;
 
-
+struct WrapHandler w_handlers[4];
+unsigned int w_handler_count = 0;
 
 class PeachDuino
 {
@@ -40,12 +47,13 @@ class PeachDuino
       serial = &hw_serial;
     };
 
-    // void addHandler(unsigned int typeId, void (Wrap::* handler)(void* message))
-    // {
-    //   g_handlers[g_handler_count].typeId = typeId;
-    //   g_handlers[g_handler_count].wrapHandler = handler;
-    //   g_handler_count++;
-    // };
+    void addHandler(unsigned int typeId, void (Wrap::* handler)(void* message), Wrap* ctx)
+    {
+      w_handlers[w_handler_count].typeId = typeId;
+      w_handlers[w_handler_count].handler = handler;
+      w_handlers[w_handler_count].ctx = ctx;
+      w_handler_count++;
+    };
 
     bool process()
     {
@@ -124,6 +132,11 @@ class PeachDuino
       for(int i=0; i < g_handler_count; i++) {
         if (g_handlers[i].typeId == typeId) {
           g_handlers[i].handler(message);
+        }
+      }
+      for(int i=0; i < w_handler_count; i++) {
+        if (w_handlers[i].typeId == typeId) {
+          (w_handlers[i].ctx->*w_handlers[i].handler)(message);
         }
       }
 
