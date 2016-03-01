@@ -1,4 +1,4 @@
-from messages_pb2 import Simple
+from messages_pb2 import PrinterStatus
 
 
 class ProtoBuffableMessage(object):
@@ -12,25 +12,38 @@ class ProtoBuffableMessage(object):
         raise NotImplementedError()
 
 
-class SimpleMessage(ProtoBuffableMessage):
-    TYPE_ID = 1
+class PrinterStatusMessage(ProtoBuffableMessage):
+    TYPE_ID = 51
 
-    def __init__(self, lucky_number, message):
-        self._lucky_number = lucky_number
-        self._message = message
-
-    @property
-    def lucky_number(self):
-        return self._lucky_number
+    def __init__(self, targetHeightMicrometer, currentHeightMicrometer, waitingForNextLayerHeight, status):
+        self._target_height_micrometer = targetHeightMicrometer
+        self._current_height_micrometer = currentHeightMicrometer
+        self._waiting_for_next_layer_height = waitingForNextLayerHeight
+        self._status = status
 
     @property
-    def message(self):
-        return self._message
+    def target_height_micrometer():
+        return self._target_height_micrometer
+
+    @property
+    def current_height_micrometer():
+        return self._current_height_micrometer
+
+    @property
+    def waiting_for_next_layer_height():
+        return self._waiting_for_next_layer_height
+
+    @property
+    def status():
+        return self._status
+
 
     def get_bytes(self):
-        encoded = Simple()
-        encoded.lucky_number = self._lucky_number
-        encoded.message = self._message
+        encoded = PrinterStatus()
+        encoded.targetHeightMicrometer = self._target_height_micrometer
+        encoded.currentHeightMicrometer = self._current_height_micrometer
+        encoded.waitingForNextLayerHeight = self._waiting_for_next_layer_height
+        encoded.status = self._status
 
         if encoded.IsInitialized():
             return encoded.SerializeToString()
@@ -39,18 +52,32 @@ class SimpleMessage(ProtoBuffableMessage):
 
     @classmethod
     def from_bytes(cls, proto_bytes):
-        decoded = Simple()
+        decoded = PrinterStatus()
         decoded.ParseFromString(proto_bytes)
-        return cls(decoded.lucky_number, decoded.message)
+        return cls(
+            decoded.targetHeightMicrometer,
+            decoded.currentHeightMicrometer,
+            decoded.waitingForNextLayerHeight,
+            decoded.status,
+            )
 
     def __eq__(self, other):
         if (self.__class__ == other.__class__ and
-                self._lucky_number == other._lucky_number and
-                self._message == other._message
+                self._target_height_micrometer == other._target_height_micrometer and
+                self._current_height_micrometer == other._current_height_micrometer and
+                self._waiting_for_next_layer_height == other._waiting_for_next_layer_height and
+                self._status == other._status
                 ):
             return True
         else:
             return False
 
     def __repr__(self):
-        return "Lucky: {} Message: {}".format(self._lucky_number, self._message)
+        return ("Target Height            : {}\n"
+               "Current Height           : {}\n"
+               "Waiting for next height  : {}\n"
+               "Status                   : {}").format(
+                self._target_height_micrometer,
+                self._current_height_micrometer,
+                self._waiting_for_next_layer_height,
+                self._status)

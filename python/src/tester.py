@@ -1,8 +1,9 @@
 import serial
 import time
 import threading
-from messages import SimpleMessage
+from messages import PrinterStatusMessage
 from arduino_communicator import ArduinoCommunicator
+
 
 class DoIt(object):
     HEADER = 0x00
@@ -18,7 +19,7 @@ class DoIt(object):
     def go(self):
         for i in range(0, 20):
             print(i)
-            message = SimpleMessage(i, str(time.ctime()))
+            message = PrinterStatusMessage(i, i+1, i % 2 == 0, i % 4)
             self.connection.send(message)
             time.sleep(0.5)
         self.connection.close()

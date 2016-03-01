@@ -18,31 +18,106 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='messages.proto',
   package='',
-  serialized_pb=_b('\n\x0emessages.proto\"/\n\x06Simple\x12\x14\n\x0clucky_number\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x02(\t')
+  serialized_pb=_b('\n\x0emessages.proto\"\xd6\x01\n\rPrinterStatus\x12\x1e\n\x16targetHeightMicrometer\x18\x01 \x02(\r\x12\x1f\n\x17\x63urrentHeightMicrometer\x18\x02 \x02(\r\x12!\n\x19waitingForNextLayerHeight\x18\x03 \x02(\x08\x12%\n\x06status\x18\x04 \x02(\x0e\x32\x15.PrinterStatus.Status\":\n\x06Status\x12\x07\n\x03NEW\x10\x00\x12\x0c\n\x08PRINTING\x10\x01\x12\x0b\n\x07WAITING\x10\x02\x12\x0c\n\x08\x43OMPLETE\x10\x03\"\x1d\n\x0c\x44ripRecorded\x12\r\n\x05\x64rips\x18\x01 \x02(\r\"\x1d\n\x0cSetDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r\" \n\x0fMoveToDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
+_PRINTERSTATUS_STATUS = _descriptor.EnumDescriptor(
+  name='Status',
+  full_name='PrinterStatus.Status',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='NEW', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRINTING', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='WAITING', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='COMPLETE', index=3, number=3,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=175,
+  serialized_end=233,
+)
+_sym_db.RegisterEnumDescriptor(_PRINTERSTATUS_STATUS)
 
-_SIMPLE = _descriptor.Descriptor(
-  name='Simple',
-  full_name='Simple',
+
+_PRINTERSTATUS = _descriptor.Descriptor(
+  name='PrinterStatus',
+  full_name='PrinterStatus',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='lucky_number', full_name='Simple.lucky_number', index=0,
-      number=1, type=5, cpp_type=1, label=2,
+      name='targetHeightMicrometer', full_name='PrinterStatus.targetHeightMicrometer', index=0,
+      number=1, type=13, cpp_type=3, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='message', full_name='Simple.message', index=1,
-      number=2, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='currentHeightMicrometer', full_name='PrinterStatus.currentHeightMicrometer', index=1,
+      number=2, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='waitingForNextLayerHeight', full_name='PrinterStatus.waitingForNextLayerHeight', index=2,
+      number=3, type=8, cpp_type=7, label=2,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='status', full_name='PrinterStatus.status', index=3,
+      number=4, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _PRINTERSTATUS_STATUS,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=19,
+  serialized_end=233,
+)
+
+
+_DRIPRECORDED = _descriptor.Descriptor(
+  name='DripRecorded',
+  full_name='DripRecorded',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='drips', full_name='DripRecorded.drips', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -57,18 +132,104 @@ _SIMPLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=18,
-  serialized_end=65,
+  serialized_start=235,
+  serialized_end=264,
 )
 
-DESCRIPTOR.message_types_by_name['Simple'] = _SIMPLE
 
-Simple = _reflection.GeneratedProtocolMessageType('Simple', (_message.Message,), dict(
-  DESCRIPTOR = _SIMPLE,
+_SETDRIPCOUNT = _descriptor.Descriptor(
+  name='SetDripCount',
+  full_name='SetDripCount',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='drips', full_name='SetDripCount.drips', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=266,
+  serialized_end=295,
+)
+
+
+_MOVETODRIPCOUNT = _descriptor.Descriptor(
+  name='MoveToDripCount',
+  full_name='MoveToDripCount',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='drips', full_name='MoveToDripCount.drips', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=297,
+  serialized_end=329,
+)
+
+_PRINTERSTATUS.fields_by_name['status'].enum_type = _PRINTERSTATUS_STATUS
+_PRINTERSTATUS_STATUS.containing_type = _PRINTERSTATUS
+DESCRIPTOR.message_types_by_name['PrinterStatus'] = _PRINTERSTATUS
+DESCRIPTOR.message_types_by_name['DripRecorded'] = _DRIPRECORDED
+DESCRIPTOR.message_types_by_name['SetDripCount'] = _SETDRIPCOUNT
+DESCRIPTOR.message_types_by_name['MoveToDripCount'] = _MOVETODRIPCOUNT
+
+PrinterStatus = _reflection.GeneratedProtocolMessageType('PrinterStatus', (_message.Message,), dict(
+  DESCRIPTOR = _PRINTERSTATUS,
   __module__ = 'messages_pb2'
-  # @@protoc_insertion_point(class_scope:Simple)
+  # @@protoc_insertion_point(class_scope:PrinterStatus)
   ))
-_sym_db.RegisterMessage(Simple)
+_sym_db.RegisterMessage(PrinterStatus)
+
+DripRecorded = _reflection.GeneratedProtocolMessageType('DripRecorded', (_message.Message,), dict(
+  DESCRIPTOR = _DRIPRECORDED,
+  __module__ = 'messages_pb2'
+  # @@protoc_insertion_point(class_scope:DripRecorded)
+  ))
+_sym_db.RegisterMessage(DripRecorded)
+
+SetDripCount = _reflection.GeneratedProtocolMessageType('SetDripCount', (_message.Message,), dict(
+  DESCRIPTOR = _SETDRIPCOUNT,
+  __module__ = 'messages_pb2'
+  # @@protoc_insertion_point(class_scope:SetDripCount)
+  ))
+_sym_db.RegisterMessage(SetDripCount)
+
+MoveToDripCount = _reflection.GeneratedProtocolMessageType('MoveToDripCount', (_message.Message,), dict(
+  DESCRIPTOR = _MOVETODRIPCOUNT,
+  __module__ = 'messages_pb2'
+  # @@protoc_insertion_point(class_scope:MoveToDripCount)
+  ))
+_sym_db.RegisterMessage(MoveToDripCount)
 
 
 # @@protoc_insertion_point(module_scope)

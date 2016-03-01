@@ -2,7 +2,7 @@ import serial
 import threading
 import time
 
-from messages import ProtoBuffableMessage, SimpleMessage
+from messages import ProtoBuffableMessage
 
 class Communicator(object):
     def send(self, message):
@@ -87,8 +87,10 @@ class ArduinoCommunicator(Communicator, threading.Thread):
         return chr(self.HEADER) + escaped_bytes + chr(self.FOOTER)
 
     def _decode(self, identifier, message):
-        m = SimpleMessage.from_bytes(message)
-        print("\n{}".format(str(m)))
+        pass
+        # if identifier == 51:
+        #     m = SimpleMessage.from_bytes(message)
+        #     print("\n{}".format(str(m)))
 
     def close(self):
         self._running = False

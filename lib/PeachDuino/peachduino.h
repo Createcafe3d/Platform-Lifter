@@ -10,7 +10,7 @@
 #define FOOTER 0xFF
 #define ESCAPE 0xFE
 
-#define SIMPLETYPE 0x01;
+#define PRINTERSTATUSTYPE 51;
 
 struct Handler {
   uint8_t typeId;
@@ -18,7 +18,7 @@ struct Handler {
 };
 
 struct Handler g_handlers[32];
-int g_handler_count = 0;
+unsigned int g_handler_count = 0;
 
 
 class PeachDuino
@@ -34,12 +34,12 @@ class PeachDuino
       return readSerial();
     };
 
-    void sendMessage(Simple message)
-    {
-      pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
-      bool status = pb_encode(&stream, Simple_fields, &message);
-      _sendBytes(stream);
-    };
+    // void sendMessage(Simple message)
+    // {
+    //   pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
+    //   bool status = pb_encode(&stream, Simple_fields, &message);
+    //   _sendBytes(stream);
+    // };
 
     int success()
     {
@@ -57,9 +57,8 @@ class PeachDuino
       g_handler_count++;
     }
 
-    int recieved = 0;
-    int sent = 0;
-    // Simple message = Simple_init_zero;
+    unsigned long recieved = 0;
+    unsigned long sent = 0;
 
   private:
     uint8_t inputBuffer[64];
@@ -80,10 +79,10 @@ class PeachDuino
       void *message;
       pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
       switch(typeId){
-        case 1:
-          Simple simpleMessage = Simple_init_zero;
-          message = &simpleMessage;
-          status = pb_decode(&stream, Simple_fields, message);
+        case 51:
+          PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
+          message = &printerStatusMessage;
+          status = pb_decode(&stream, PrinterStatus_fields, message);
           break;
       }
       for(int i=0; i < g_handler_count; i++) {
@@ -103,7 +102,7 @@ class PeachDuino
     void _sendBytes(pb_ostream_t stream) {
       uint8_t encodedBuffer[64];
       encodedBuffer[0] = HEADER;
-      encodedBuffer[1] = SIMPLETYPE;
+      encodedBuffer[1] = PRINTERSTATUSTYPE;
       int encodedBufferIndex = 2;
       for (int outputBufferIndex = 0; outputBufferIndex < stream.bytes_written; outputBufferIndex++){
         switch(outputBuffer[outputBufferIndex]){
