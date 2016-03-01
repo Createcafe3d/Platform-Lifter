@@ -18,7 +18,7 @@ if [ $? != 0 ]; then
     EXIT_CODE=103
     failed_exit
 fi
-mv messages.pb.* ../protobuf_arduino
+mv messages.pb.* ../lib/PeachDuino
 if [ $? != 0 ]; then
     echo "DEATH DOOM FAILURE"
     EXIT_CODE=104
