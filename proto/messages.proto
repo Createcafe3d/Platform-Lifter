@@ -27,3 +27,7 @@ message SetDripCount {
 message MoveToDripCount {
   required uint32 drips = 1;
 }
+
+message SetCurrentHeight {
+    required uint32 heightMicrometers = 1;
+}

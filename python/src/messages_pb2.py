@@ -18,7 +18,7 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='messages.proto',
   package='',
-  serialized_pb=_b('\n\x0emessages.proto\"\xd6\x01\n\rPrinterStatus\x12\x1e\n\x16targetHeightMicrometer\x18\x01 \x02(\r\x12\x1f\n\x17\x63urrentHeightMicrometer\x18\x02 \x02(\r\x12!\n\x19waitingForNextLayerHeight\x18\x03 \x02(\x08\x12%\n\x06status\x18\x04 \x02(\x0e\x32\x15.PrinterStatus.Status\":\n\x06Status\x12\x07\n\x03NEW\x10\x00\x12\x0c\n\x08PRINTING\x10\x01\x12\x0b\n\x07WAITING\x10\x02\x12\x0c\n\x08\x43OMPLETE\x10\x03\"\x1d\n\x0c\x44ripRecorded\x12\r\n\x05\x64rips\x18\x01 \x02(\r\"\x1d\n\x0cSetDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r\" \n\x0fMoveToDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r')
+  serialized_pb=_b('\n\x0emessages.proto\"\xd6\x01\n\rPrinterStatus\x12\x1e\n\x16targetHeightMicrometer\x18\x01 \x02(\r\x12\x1f\n\x17\x63urrentHeightMicrometer\x18\x02 \x02(\r\x12!\n\x19waitingForNextLayerHeight\x18\x03 \x02(\x08\x12%\n\x06status\x18\x04 \x02(\x0e\x32\x15.PrinterStatus.Status\":\n\x06Status\x12\x07\n\x03NEW\x10\x00\x12\x0c\n\x08PRINTING\x10\x01\x12\x0b\n\x07WAITING\x10\x02\x12\x0c\n\x08\x43OMPLETE\x10\x03\"\x1d\n\x0c\x44ripRecorded\x12\r\n\x05\x64rips\x18\x01 \x02(\r\"\x1d\n\x0cSetDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r\" \n\x0fMoveToDripCount\x12\r\n\x05\x64rips\x18\x01 \x02(\r\"-\n\x10SetCurrentHeight\x12\x19\n\x11heightMicrometers\x18\x01 \x02(\r')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -196,12 +196,43 @@ _MOVETODRIPCOUNT = _descriptor.Descriptor(
   serialized_end=329,
 )
 
+
+_SETCURRENTHEIGHT = _descriptor.Descriptor(
+  name='SetCurrentHeight',
+  full_name='SetCurrentHeight',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='heightMicrometers', full_name='SetCurrentHeight.heightMicrometers', index=0,
+      number=1, type=13, cpp_type=3, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=331,
+  serialized_end=376,
+)
+
 _PRINTERSTATUS.fields_by_name['status'].enum_type = _PRINTERSTATUS_STATUS
 _PRINTERSTATUS_STATUS.containing_type = _PRINTERSTATUS
 DESCRIPTOR.message_types_by_name['PrinterStatus'] = _PRINTERSTATUS
 DESCRIPTOR.message_types_by_name['DripRecorded'] = _DRIPRECORDED
 DESCRIPTOR.message_types_by_name['SetDripCount'] = _SETDRIPCOUNT
 DESCRIPTOR.message_types_by_name['MoveToDripCount'] = _MOVETODRIPCOUNT
+DESCRIPTOR.message_types_by_name['SetCurrentHeight'] = _SETCURRENTHEIGHT
 
 PrinterStatus = _reflection.GeneratedProtocolMessageType('PrinterStatus', (_message.Message,), dict(
   DESCRIPTOR = _PRINTERSTATUS,
@@ -230,6 +261,13 @@ MoveToDripCount = _reflection.GeneratedProtocolMessageType('MoveToDripCount', (_
   # @@protoc_insertion_point(class_scope:MoveToDripCount)
   ))
 _sym_db.RegisterMessage(MoveToDripCount)
+
+SetCurrentHeight = _reflection.GeneratedProtocolMessageType('SetCurrentHeight', (_message.Message,), dict(
+  DESCRIPTOR = _SETCURRENTHEIGHT,
+  __module__ = 'messages_pb2'
+  # @@protoc_insertion_point(class_scope:SetCurrentHeight)
+  ))
+_sym_db.RegisterMessage(SetCurrentHeight)
 
 
 # @@protoc_insertion_point(module_scope)

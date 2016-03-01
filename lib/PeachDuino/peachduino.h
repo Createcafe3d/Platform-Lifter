@@ -11,6 +11,8 @@
 #define ESCAPE 0xFE
 
 #define PRINTERSTATUSTYPE 51;
+#define DRIPRECORDEDTYPE 3;
+#define SETCURRENTHEIGHTTYPE 52;
 
 struct Handler {
   uint8_t typeId;
@@ -38,7 +40,14 @@ class PeachDuino
     {
       pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
       bool status = pb_encode(&stream, DripRecorded_fields, &dripRecordedMessage);
-      _sendBytes(3, stream);
+      _sendBytes(DRIPRECORDEDTYPE, stream);
+    };
+
+    void sendMessage(SetCurrentHeight setCurrentHeightMessage)
+    {
+      pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
+      bool status = pb_encode(&stream, SetCurrentHeight_fields, &setCurrentHeightMessage);
+      _sendBytes(SETCURRENTHEIGHTTYPE, stream);
     };
 
     int success()
@@ -79,7 +88,7 @@ class PeachDuino
       void *message;
       pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
       switch(typeId){
-        case 51:
+        case PRINTERSTATUSTYPE:
           PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
           message = &printerStatusMessage;
           status = pb_decode(&stream, PrinterStatus_fields, message);

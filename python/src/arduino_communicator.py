@@ -2,7 +2,7 @@ import serial
 import threading
 import time
 
-from messages import ProtoBuffableMessage, DripRecordedMessage
+from messages import ProtoBuffableMessage, DripRecordedMessage, SetCurrentHeightMessage
 
 class Communicator(object):
     def send(self, message):
@@ -18,7 +18,8 @@ class ArduinoCommunicator(Communicator, threading.Thread):
     ESCAPE = 0xFE
 
     messages = {
-        3: DripRecordedMessage
+        3: DripRecordedMessage,
+        52: SetCurrentHeightMessage,
     }
 
     def __init__(self, port, baud=14400):

@@ -22,6 +22,7 @@ PrinterStatus printerStatusMessage;
 bool messageRefreshed = false;
 unsigned long loops = 0;
 unsigned long drips = 0;
+unsigned long lastHeight = 0;
 
 void setup() {
   peachDuino->addHandler(51, printerStatusHandler);
@@ -51,8 +52,11 @@ void displaySetup(){
   tft.setCursor(0, 60);
   tft.println("Status");
 
-  tft.setCursor(0, 80);
+  tft.setCursor(0, 100);
   tft.println("Drips");
+
+  tft.setCursor(0, 120);
+  tft.println("Height");
 
   tft.setCursor(0, 140);
   tft.println("Fails");
@@ -91,9 +95,13 @@ void display() {
     messageRefreshed = false;
   }
 
-  tft.fillRect(160, 80, 45, 15, 0x0000);
-  tft.setCursor(160, 80);
+  tft.fillRect(160, 100, 45, 15, 0x0000);
+  tft.setCursor(160, 100);
   tft.println(drips);
+
+  tft.fillRect(160, 120, 50, 15, 0x0000);
+  tft.setCursor(160, 120);
+  tft.println(lastHeight);
 
   tft.fillRect(160, 140, 45, 15, ILI9340_RED);
   tft.setCursor(160, 140);
@@ -129,16 +137,21 @@ void incAndSendDrips() {
 
 void update() {
   display();
-  // Simple message = {peachDuino->success(), "Success"};
-  // peachDuino->sendMessage(message);
 }
 
 void loop(void) {
   loops++;
+  if (lastHeight != analogRead(0))
+  {
+    lastHeight = analogRead(0);
+    SetCurrentHeight setCurrentHeightMessage = {lastHeight};
+    peachDuino->sendMessage(setCurrentHeightMessage);
+  }
   peachDuino->process();
 
-  if (loops % 1000 == 0){
-      update();
+  if (loops % 1000 == 0)
+  {
+    update();
   }
 }
 
