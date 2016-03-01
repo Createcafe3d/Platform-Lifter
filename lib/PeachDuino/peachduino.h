@@ -34,12 +34,12 @@ class PeachDuino
       return readSerial();
     };
 
-    // void sendMessage(Simple message)
-    // {
-    //   pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
-    //   bool status = pb_encode(&stream, Simple_fields, &message);
-    //   _sendBytes(stream);
-    // };
+    void sendMessage(DripRecorded dripRecordedMessage)
+    {
+      pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
+      bool status = pb_encode(&stream, DripRecorded_fields, &dripRecordedMessage);
+      _sendBytes(3, stream);
+    };
 
     int success()
     {
@@ -99,10 +99,10 @@ class PeachDuino
       }
     }
 
-    void _sendBytes(pb_ostream_t stream) {
+    void _sendBytes(byte id, pb_ostream_t stream) {
       uint8_t encodedBuffer[64];
       encodedBuffer[0] = HEADER;
-      encodedBuffer[1] = PRINTERSTATUSTYPE;
+      encodedBuffer[1] = id;
       int encodedBufferIndex = 2;
       for (int outputBufferIndex = 0; outputBufferIndex < stream.bytes_written; outputBufferIndex++){
         switch(outputBuffer[outputBufferIndex]){

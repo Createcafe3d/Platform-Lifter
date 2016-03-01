@@ -21,9 +21,12 @@ PeachDuino* peachDuino = new PeachDuino(Serial);
 PrinterStatus printerStatusMessage;
 bool messageRefreshed = false;
 unsigned long loops = 0;
+unsigned long drips = 0;
 
 void setup() {
   peachDuino->addHandler(51, printerStatusHandler);
+
+  attachInterrupt(digitalPinToInterrupt(2), incAndSendDrips, RISING);
   Serial.begin(9600);
 
   tft.begin();
@@ -35,8 +38,7 @@ void setup() {
   displaySetup();
 }
 
-void displaySetup()
-{
+void displaySetup(){
   tft.setCursor(0, 0);
   tft.println("Current Height");
 
@@ -48,6 +50,9 @@ void displaySetup()
 
   tft.setCursor(0, 60);
   tft.println("Status");
+
+  tft.setCursor(0, 80);
+  tft.println("Drips");
 
   tft.setCursor(0, 140);
   tft.println("Fails");
@@ -85,6 +90,11 @@ void display() {
 
     messageRefreshed = false;
   }
+
+  tft.fillRect(160, 80, 45, 15, 0x0000);
+  tft.setCursor(160, 80);
+  tft.println(drips);
+
   tft.fillRect(160, 140, 45, 15, ILI9340_RED);
   tft.setCursor(160, 140);
   tft.println(peachDuino->fails());
@@ -109,6 +119,12 @@ void display() {
 void printerStatusHandler(void* newMessage) {
   printerStatusMessage = *((PrinterStatus*)newMessage);
   messageRefreshed = true;
+}
+
+void incAndSendDrips() {
+  drips++;
+  DripRecorded dripRecordedMessage = {drips};
+  peachDuino->sendMessage(dripRecordedMessage);
 }
 
 void update() {

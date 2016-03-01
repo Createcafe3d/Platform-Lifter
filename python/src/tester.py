@@ -17,7 +17,7 @@ class DoIt(object):
         time.sleep(3)
 
     def go(self):
-        for i in range(0, 20):
+        for i in range(0, 200):
             print(i)
             message = PrinterStatusMessage(i, i+1, i % 2 == 0, i % 4)
             self.connection.send(message)

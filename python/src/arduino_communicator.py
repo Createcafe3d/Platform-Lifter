@@ -2,7 +2,7 @@ import serial
 import threading
 import time
 
-from messages import ProtoBuffableMessage
+from messages import ProtoBuffableMessage, DripRecordedMessage
 
 class Communicator(object):
     def send(self, message):
@@ -16,6 +16,10 @@ class ArduinoCommunicator(Communicator, threading.Thread):
     HEADER = 0x00
     FOOTER = 0xFF
     ESCAPE = 0xFE
+
+    messages = {
+        3: DripRecordedMessage
+    }
 
     def __init__(self, port, baud=14400):
         self.port = port
@@ -72,7 +76,8 @@ class ArduinoCommunicator(Communicator, threading.Thread):
                         try:
                             self._decode(self.current_message_identifier, self.current_message)
                         except:
-                            print("Failed to Decode")
+                            print("Failed to Decode Message with id: {}" .format(self.current_message_identifier))
+                            print(':'.join('{:02x}'.format(ord(x)) for x in self.current_message))
                     self.in_message = False
                 else:
                     self.current_message += byte
@@ -87,10 +92,9 @@ class ArduinoCommunicator(Communicator, threading.Thread):
         return chr(self.HEADER) + escaped_bytes + chr(self.FOOTER)
 
     def _decode(self, identifier, message):
-        pass
-        # if identifier == 51:
-        #     m = SimpleMessage.from_bytes(message)
-        #     print("\n{}".format(str(m)))
+        cls = self.messages[identifier]
+        message = cls.from_bytes(message)
+        print("\n{}".format(str(message)))
 
     def close(self):
         self._running = False
