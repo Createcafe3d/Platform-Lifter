@@ -28,12 +28,12 @@ class SimplePeachDuino: public Wrap
       return _peachDuino->fails();
     };
 
-    int recieved()
+    unsigned long recieved()
     {
       return _peachDuino->recieved();
     };
 
-    int sent()
+    unsigned long sent()
     {
       return _peachDuino->sent();
     };
@@ -50,7 +50,6 @@ class SimplePeachDuino: public Wrap
       _peachDuino->sendMessage(dripRecordedMessage);
     };
 
-    PeachDuino* _peachDuino;
     unsigned int targetHeightMicrometer = 0;
     unsigned int currentHeightMicrometer = 0;
     bool waitingForNextLayerHeight = true;
@@ -62,6 +61,7 @@ class SimplePeachDuino: public Wrap
     unsigned int targetDripCount = 0;
 
   private:
+    PeachDuino* _peachDuino;
     virtual void printerStatusHandler(void* newMessage) {
         PrinterStatus printerStatusMessage = *((PrinterStatus*)newMessage);
         targetHeightMicrometer = printerStatusMessage.targetHeightMicrometer;

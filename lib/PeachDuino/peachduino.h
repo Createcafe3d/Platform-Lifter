@@ -120,7 +120,7 @@ class PeachDuino
     HardwareSerial* serial;
     unsigned long _recieved = 0;
     unsigned long _sent = 0;
-    
+
 void decode(uint8_t *buffer, size_t message_length) 
 {
   uint8_t typeId = buffer[0];
@@ -128,23 +128,28 @@ void decode(uint8_t *buffer, size_t message_length)
   void *message;
   pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
 
-  PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
-  SetDripCount setDripCountMessage = SetDripCount_init_zero;
-  MoveToDripCount moveToDripCountMessage = MoveToDripCount_init_zero;
-  
   switch(typeId){
     case PRINTERSTATUS_TYPE:
-      message = &printerStatusMessage;
-      status = pb_decode(&stream, PrinterStatus_fields, message);
-      break;
+      {
+        PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
+        message = &printerStatusMessage;
+        status = pb_decode(&stream, PrinterStatus_fields, message);
+        break;
+      }
     case SETDRIPCOUNT_TYPE:
-      message = &setDripCountMessage;
-      status = pb_decode(&stream, SetDripCount_fields, message);
-      break;
+      {
+        SetDripCount setDripCountMessage = SetDripCount_init_zero;
+        message = &setDripCountMessage;
+        status = pb_decode(&stream, SetDripCount_fields, message);
+        break;
+      }
     case MOVETODRIPCOUNT_TYPE:
-      message = &moveToDripCountMessage;
-      status = pb_decode(&stream, MoveToDripCount_fields, message);
-      break;
+      {
+        MoveToDripCount moveToDripCountMessage = MoveToDripCount_init_zero;
+        message = &moveToDripCountMessage;
+        status = pb_decode(&stream, MoveToDripCount_fields, message);
+        break;
+      }
   }
   for(int i=0; i < g_handler_count; i++) {
     if (g_handlers[i].typeId == typeId) {
