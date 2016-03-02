@@ -10,15 +10,20 @@
 #define FOOTER 0xFF
 #define ESCAPE 0xFE
 
-#define PRINTERSTATUSTYPE 51
-#define DRIPRECORDEDTYPE 3
-#define SETCURRENTHEIGHTTYPE 52
+//Incomming
+#define SETDRIPCOUNT_TYPE 4
+#define MOVETODRIPCOUNT_TYPE 5
+#define PRINTERSTATUS_TYPE 51
+
+//Outgoing
+#define DRIPRECORDED_TYPE 3
+#define SETCURRENTHEIGHT_TYPE 52
 
 class Wrap
 {
   public:
     virtual void printerStatusHandler(void* newMessage);
-
+    virtual void moveToDripCountHandler(void* newMessage);
 };
 
 
@@ -64,14 +69,14 @@ class PeachDuino
     {
       pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
       bool status = pb_encode(&stream, DripRecorded_fields, &dripRecordedMessage);
-      _sendBytes(DRIPRECORDEDTYPE, stream);
+      _sendBytes(DRIPRECORDED_TYPE, stream);
     };
 
     void sendMessage(SetCurrentHeight setCurrentHeightMessage)
     {
       pb_ostream_t stream = pb_ostream_from_buffer(outputBuffer, sizeof(outputBuffer));
       bool status = pb_encode(&stream, SetCurrentHeight_fields, &setCurrentHeightMessage);
-      _sendBytes(SETCURRENTHEIGHTTYPE, stream);
+      _sendBytes(SETCURRENTHEIGHT_TYPE, stream);
     };
 
     int success()
@@ -115,38 +120,50 @@ class PeachDuino
     HardwareSerial* serial;
     unsigned long _recieved = 0;
     unsigned long _sent = 0;
+    
+void decode(uint8_t *buffer, size_t message_length) 
+{
+  uint8_t typeId = buffer[0];
+  bool status;
+  void *message;
+  pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
 
-    void decode(uint8_t *buffer, size_t message_length) 
-    {
-      uint8_t typeId = buffer[0];
-      bool status;
-      void *message;
-      pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
-      switch(typeId){
-        case PRINTERSTATUSTYPE:
-          PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
-          message = &printerStatusMessage;
-          status = pb_decode(&stream, PrinterStatus_fields, message);
-          break;
-      }
-      for(int i=0; i < g_handler_count; i++) {
-        if (g_handlers[i].typeId == typeId) {
-          g_handlers[i].handler(message);
-        }
-      }
-      for(int i=0; i < w_handler_count; i++) {
-        if (w_handlers[i].typeId == typeId) {
-          (w_handlers[i].ctx->*w_handlers[i].handler)(message);
-        }
-      }
-
-      if (!status)
-      {
-        _fails++;
-      } else {
-        _success++;
-      }
+  PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
+  SetDripCount setDripCountMessage = SetDripCount_init_zero;
+  MoveToDripCount moveToDripCountMessage = MoveToDripCount_init_zero;
+  
+  switch(typeId){
+    case PRINTERSTATUS_TYPE:
+      message = &printerStatusMessage;
+      status = pb_decode(&stream, PrinterStatus_fields, message);
+      break;
+    case SETDRIPCOUNT_TYPE:
+      message = &setDripCountMessage;
+      status = pb_decode(&stream, SetDripCount_fields, message);
+      break;
+    case MOVETODRIPCOUNT_TYPE:
+      message = &moveToDripCountMessage;
+      status = pb_decode(&stream, MoveToDripCount_fields, message);
+      break;
+  }
+  for(int i=0; i < g_handler_count; i++) {
+    if (g_handlers[i].typeId == typeId) {
+      g_handlers[i].handler(message);
     }
+  }
+  for(int i=0; i < w_handler_count; i++) {
+    if (w_handlers[i].typeId == typeId) {
+      (w_handlers[i].ctx->*w_handlers[i].handler)(message);
+    }
+  }
+
+  if (!status)
+  {
+    _fails++;
+  } else {
+    _success++;
+  }
+}
 
     void _sendBytes(byte id, pb_ostream_t stream) {
       uint8_t encodedBuffer[64];
