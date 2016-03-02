@@ -1,4 +1,4 @@
-# PeachyDuino
+# PeachDuino
 This software is provided as is and is not guarenteed to work with all versions of the software. We intend this as a work in progress and hope to expand its functionality to support then many amazing ideas of our users. There are 2 version of this api Advanced and Simple, the advanced version of this api is designed with experienced programmers in mind where as the simple API is diesgned more for hobbiests.
 
 ## Simple PeachDuino
