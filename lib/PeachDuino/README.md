@@ -50,7 +50,7 @@ void loop(void)
 * void sendDripCount(unsigned int drips) _(Used to tell the printer software the current number of drips [Use as alternative to sendHeightMicrometer])_
 
 ####Helper
-* void process() _(This method process data in the serial buffer and should be called very regularly)_
+* bool process() _(This method process data in the serial buffer and should be called very regularly Returns True if data read.)_
 * unsigned int success() _(Number of successfullly recieved messages.)_
 * unsigned int fails() _(Number of failed messages. This may not include messages that did not arrive.)_
 * unsigned long recieved() _(Number of bytes recieved.)_
@@ -106,7 +106,6 @@ void incAndSendDrips() {
 void loop(void) {
   peachDuino->process();  //You must call the process method regularly to ensure that all messages are processed.
 }
-
 ```
 
 ###Subscribing
