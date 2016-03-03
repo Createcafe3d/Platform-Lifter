@@ -13,7 +13,7 @@ class SimplePeachDuino: public Wrap
       _peachDuino->addHandler(MOVETODRIPCOUNT_TYPE, &Wrap::moveToDripCountHandler, this);
     };
 
-    bool process()
+    short process()
     {
       return _peachDuino->process();
     };
@@ -38,27 +38,27 @@ class SimplePeachDuino: public Wrap
       return _peachDuino->sent();
     };
 
-    void sendHeightMicrometer(unsigned int height)
+    void sendHeightMicrometer(unsigned long height)
     {
       SetCurrentHeight setCurrentHeightMessage = {height};
       _peachDuino->sendMessage(setCurrentHeightMessage);
     };
 
-    void sendDripCount(unsigned int drips)
+    void sendDripCount(unsigned long drips)
     {
       DripRecorded dripRecordedMessage = {drips};
       _peachDuino->sendMessage(dripRecordedMessage);
     };
 
-    unsigned int targetHeightMicrometer = 0;
-    unsigned int currentHeightMicrometer = 0;
+    unsigned long targetHeightMicrometer = 0;
+    unsigned long currentHeightMicrometer = 0;
     bool waitingForNextLayerHeight = true;
     short printStatus = 0;
     // 0 - Unstarted
     // 1 - Printing
     // 2 - Waiting For Next Layer Height
     // 3 - Complete
-    unsigned int targetDripCount = 0;
+    unsigned long targetDripCount = 0;
 
   private:
     PeachDuino* _peachDuino;

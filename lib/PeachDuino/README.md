@@ -22,7 +22,7 @@ void setup()
 
 void loop(void)
 {
-  peachDuino->process();    //You must call the process method regularly to ensure that all messages are processed.
+  peachDuino->process();    //You must call the process method regularly [see Missed and Damaged Messages] to ensure that all messages are processed.
   if (peachDuino->waitingForNextLayerHeight)
   {
     digitalWrite(WAITING_PIN, HIGH);
@@ -33,10 +33,10 @@ void loop(void)
 ```
 
 ###Properties
-* unsigned int targetHeightMicrometer    _(This is the requested height the software would like the printer to go to.)_
-* unsigned int currentHeightMicrometer   _(This is the current height the software believes the print to be at.)_
+* unsigned long targetHeightMicrometer    _(This is the requested height the software would like the printer to go to.)_
+* unsigned long currentHeightMicrometer   _(This is the current height the software believes the print to be at.)_
 * bool waitingForNextLayerHeight         _(True if the printer is paused waiting for the height of the print to be correct.)_
-* unsigned int targetDripCount           _(This is the number of drips the printer is expecting [Use as alternative to targetHeightMicrometer].)_
+* unsigned long targetDripCount           _(This is the number of drips the printer is expecting [Use as alternative to targetHeightMicrometer].)_
 * short printStatus                      _(The status of the current print as defined below.)_
   * 0 - Unstarted
   * 1 - Printing
@@ -46,11 +46,11 @@ void loop(void)
 ###Methods
 
 ####Communication
-* void sendHeightMicrometer(unsigned int height) _(Used to tell the printer software the current height in Micrometers)_
-* void sendDripCount(unsigned int drips) _(Used to tell the printer software the current number of drips [Use as alternative to sendHeightMicrometer])_
+* void sendHeightMicrometer(unsigned long height) _(Used to tell the printer software the current height in Micrometers)_
+* void sendDripCount(unsigned long drips) _(Used to tell the printer software the current number of drips [Use as alternative to sendHeightMicrometer])_
 
 ####Helper
-* bool process() _(This method process data in the serial buffer and should be called very regularly Returns True if data read.)_
+* short process() _(This method process data in the serial buffer and should be called very regularly [see Missed and Damaged Messages], Returns number of bytes read)_
 * unsigned int success() _(Number of successfullly recieved messages.)_
 * unsigned int fails() _(Number of failed messages. This may not include messages that did not arrive.)_
 * unsigned long recieved() _(Number of bytes recieved.)_
@@ -63,6 +63,31 @@ void loop(void)
 A Common mistake when programming the arduino is the use of delay. For many applications you can get away with using delay but when programming with serial events, this is not the case. The problem exists in the buffer size for serial data. To prevent overflowing the buffer you must be reading the buffer regularly and the use of delay can prevent this.
 For example in the uno the buffer is only 64 bytes. If you have a delay of 1 second in your code you cound fill that buffer over 16 times and potentially lose many important messages.
 The best work around for this is to use microseconds and if statements Arduino has a great example built in, you can view it at [https://www.arduino.cc/en/Tutorial/BlinkWithoutDelay]
+
+#### Missed and Damaged Messages
+You need to call the process command very frequently or you run in to the possibility of over flowing the buffer. For example the UNO has a 64byte buffer for serial input. Say your connecting at 9600baud and the connection is busy. That means you will be getting 1200 bytes per second which means to capture all that data you need to read the buffer  18.75 times per second in a perfect scenario. (most of the time its not perfect so you should be reading more often).
+
+|Baud  |Bytes/s |Processes per second |
+|-----:|-------:|--------------------:|
+|2400  |300     |4.69                 |
+|4800  |600     |9.38                 |
+|9600  |1200    |18.75                |
+|19200 |2400    |37.5                 |
+|38400 |4800    |75                   |
+|57600 |7200    |112.5                |
+|115200|14400   |178.125              |
+
+A good way of troubleshooting this problem is to look at the bytes read when calling process and lighting up a warning LED if the number is high.
+```c++
+...
+bytesRead = peachDuino->process();
+if (bytesRead > 56;){
+    digitalWrite(BUFFER_WARNING_PIN, LOW):     //  +5v --- Resistor ---- LED ----- PIN
+} else {
+    digitalWrite(BUFFER_WARNING_PIN, HIGH):
+}
+...
+```
 
 
 ## Advanced PeachDuino
@@ -104,7 +129,7 @@ void incAndSendDrips() {
 }
 
 void loop(void) {
-  peachDuino->process();  //You must call the process method regularly to ensure that all messages are processed.
+  peachDuino->process();  //You must call the process method regularly [see Missed and Damaged Messages] to ensure that all messages are processed.
 }
 ```
 
@@ -156,7 +181,7 @@ Messages available and thier members:
 ```
 
 ###Helpers
-* void process() _(This method process data in the serial buffer and should be called very regularly)_
+* void process() _(This method process data in the serial buffer and should be called very regularly [see Missed and Damaged Messages], This returns the bytes read)_
 * unsigned int success() _(Number of successfullly recieved messages.)_
 * unsigned int fails() _(Number of failed messages. This may not include messages that did not arrive.)_
 * unsigned long recieved() _(Number of bytes recieved.)_

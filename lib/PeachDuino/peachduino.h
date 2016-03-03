@@ -39,10 +39,10 @@ struct WrapHandler {
 };
 
 struct Handler g_handlers[8];
-unsigned int g_handler_count = 0;
+unsigned short g_handler_count = 0;
 
 struct WrapHandler w_handlers[4];
-unsigned int w_handler_count = 0;
+unsigned short w_handler_count = 0;
 
 class PeachDuino
 {
@@ -60,7 +60,7 @@ class PeachDuino
       w_handler_count++;
     };
 
-    bool process()
+    short process()
     {
       return readSerial();
     };
@@ -109,68 +109,68 @@ class PeachDuino
 
   private:
     uint8_t inputBuffer[64];
-
     uint8_t outputBuffer[64];
     uint8_t readBuffer[64];
     uint8_t bufferPos = 1;
     bool escaped;
     int _fails = 0;
     int _success = 0;
-    int available = 0;
+    short available = 0;
     HardwareSerial* serial;
     unsigned long _recieved = 0;
     unsigned long _sent = 0;
 
-void decode(uint8_t *buffer, size_t message_length) 
-{
-  uint8_t typeId = buffer[0];
-  bool status;
-  void *message;
-  pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
+    void decode(uint8_t *buffer, size_t message_length) 
+    {
+      uint8_t typeId = buffer[0];
+      bool status;
+      void *message;
+      pb_istream_t stream = pb_istream_from_buffer(buffer + 1, message_length - 1);
 
-  switch(typeId){
-    case PRINTERSTATUS_TYPE:
-      {
-        PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
-        message = &printerStatusMessage;
-        status = pb_decode(&stream, PrinterStatus_fields, message);
-        break;
+      switch(typeId){
+        case PRINTERSTATUS_TYPE:
+          {
+            PrinterStatus printerStatusMessage = PrinterStatus_init_zero;
+            message = &printerStatusMessage;
+            status = pb_decode(&stream, PrinterStatus_fields, message);
+            break;
+          }
+        case SETDRIPCOUNT_TYPE:
+          {
+            SetDripCount setDripCountMessage = SetDripCount_init_zero;
+            message = &setDripCountMessage;
+            status = pb_decode(&stream, SetDripCount_fields, message);
+            break;
+          }
+        case MOVETODRIPCOUNT_TYPE:
+          {
+            MoveToDripCount moveToDripCountMessage = MoveToDripCount_init_zero;
+            message = &moveToDripCountMessage;
+            status = pb_decode(&stream, MoveToDripCount_fields, message);
+            break;
+          }
       }
-    case SETDRIPCOUNT_TYPE:
-      {
-        SetDripCount setDripCountMessage = SetDripCount_init_zero;
-        message = &setDripCountMessage;
-        status = pb_decode(&stream, SetDripCount_fields, message);
-        break;
+      for(int i=0; i < g_handler_count; i++) {
+        if (g_handlers[i].typeId == typeId) {
+          g_handlers[i].handler(message);
+        }
       }
-    case MOVETODRIPCOUNT_TYPE:
-      {
-        MoveToDripCount moveToDripCountMessage = MoveToDripCount_init_zero;
-        message = &moveToDripCountMessage;
-        status = pb_decode(&stream, MoveToDripCount_fields, message);
-        break;
+      for(int i=0; i < w_handler_count; i++) {
+        if (w_handlers[i].typeId == typeId) {
+          (w_handlers[i].ctx->*w_handlers[i].handler)(message);
+        }
       }
-  }
-  for(int i=0; i < g_handler_count; i++) {
-    if (g_handlers[i].typeId == typeId) {
-      g_handlers[i].handler(message);
+
+      if (!status)
+      {
+        _fails++;
+      } else {
+        _success++;
+      }
     }
-  }
-  for(int i=0; i < w_handler_count; i++) {
-    if (w_handlers[i].typeId == typeId) {
-      (w_handlers[i].ctx->*w_handlers[i].handler)(message);
-    }
-  }
 
-  if (!status)
-  {
-    _fails++;
-  } else {
-    _success++;
-  }
-}
-
-    void _sendBytes(byte id, pb_ostream_t stream) {
+    void _sendBytes(byte id, pb_ostream_t stream) 
+    {
       uint8_t encodedBuffer[64];
       encodedBuffer[0] = HEADER;
       encodedBuffer[1] = id;
@@ -226,9 +226,9 @@ void decode(uint8_t *buffer, size_t message_length)
             }
           }
         }
-        return true;
+        return available;
       } else {
-        return false;
+        return available;
       }
     }
 };
