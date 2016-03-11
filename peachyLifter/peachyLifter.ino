@@ -1,11 +1,16 @@
 #include "Arduino.h"
 #define ledPin 7
 
-//16MHz timer, with prescaler of 1
+//16MHz clock, with prescaler of 64
 //To get a "tick" time of 200us we do:
-// 200e-6 * 16e6 = 3200
-uint16_t tim1_countmax=3200;
-uint16_t tim1_start=65535-tim1_countmax;
+// <time per tick> * <Clock frequency> / <prescaler>
+// 200e-6 * 16e6 / 64 = 50
+float cpu_freq = 16e6;
+float tick_time = 200e-6;
+uint8_t prescaler = 64;
+int8_t tim2_start = 256-tick_time*cpu_freq/prescaler;
+//tim2_start = -50; note negative works here due to 2's compliment. (-50 == 206) in the 8 bit data types
+
 uint16_t interrupt_count=0;
 
 void setup()
@@ -15,36 +20,40 @@ void setup()
 	pinMode(ledPin,OUTPUT); 
 	noInterrupts();
 	setupTIM1_ISR();
+  printSetups();
 	//interrupt setups here
   interrupts();
 }
+
+void printSetups(){
+  Serial.print("tim2_start is:");
+  Serial.println(tim2_start);
+}
+
 void setupTIM1_ISR(){
 	//Register definitions found Page ~131 in datasheet
-	//TCNT1   //Timer/Counter Register. The actual timer value is stored here.
-  //TCCR1B  //Timer Control Register (Prescaler here)
+	//TCNT2   //Timer/Counter Register. The actual timer value is stored here.
+  //TCCR2  //Timer Control Register (Prescaler here)
 	//TIMSK   //Timer Interrupt Mask Register
-
-  //Example code:
-  //Timer2 Settings:  Timer Prescaler /1024
-  TCCR1A=0;
-  TCCR1B=0;
-  //Prescaler is set as follows [CS12, CS11, CS10]:
+ 
+  //Prescaler is set as follows [CS22, CS21, CS20]:
   // 000 - Stopped
   // 001 - no prescaler
   // 010 - divide by 8
-  // 011 - divide by 64
-  // 100 - divide by 256
-  // 101 - divide by 1024
-  TCCR1B |= ((0 << CS12) | (0 << CS11) | (1 << CS10)); //1
+  // 011 - divide by 32
+  // 100 - divide by 64
+  // 101 - divide by 128
+  // 110 - divide by 256
+  // 111 - divide by 1024
+  TCCR2B |= ((1 << CS22) | (0 << CS21) | (0 << CS20)); //64
   //Timer2 Overflow Interrupt Enable
-  TIMSK1 |= (1 << TOIE1);
-  TCNT1=tim1_start;
-
+  TIMSK2 |= (1 << TOIE2);
+  TCNT2=tim2_start;
 
 }
 
-ISR(TIMER1_OVF_vect){
-  TCNT1=tim1_start; //Reset the timer to start value for consistant roll overs
+ISR(TIMER2_OVF_vect){
+  TCNT2=tim2_start; //Reset the timer to start value for consistant roll overs
 	digitalWrite(ledPin, digitalRead(ledPin) ^ 1); //Toggle LED on each interrupt cycle
   interrupt_count++;
 
