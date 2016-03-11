@@ -7,7 +7,7 @@
 // 200e-6 * 16e6 / 64 = 50
 float cpu_freq = 16e6;
 float tick_time = 200e-6;
-uint8_t prescaler = 64;
+uint8_t tim2_prescaler = 64;
 int8_t tim2_start = 256-tick_time*cpu_freq/prescaler;
 //tim2_start = -50; note negative works here due to 2's compliment. (-50 == 206) in the 8 bit data types
 
@@ -28,13 +28,15 @@ void setup()
 void printSetups(){
   Serial.print("tim2_start is:");
   Serial.println(tim2_start);
+  Serial.print("prescaler is:");
+  Serial.println(tim2_prescaler);
 }
 
 void setupTIM1_ISR(){
-	//Register definitions found Page ~131 in datasheet
+	//Register definitions found Page ~157 in datasheet
 	//TCNT2   //Timer/Counter Register. The actual timer value is stored here.
-  //TCCR2  //Timer Control Register (Prescaler here)
-	//TIMSK   //Timer Interrupt Mask Register
+  //TCCR2B  //Timer Control Register (Prescaler here)
+	//TIMSK2  //Timer Interrupt Mask Register
  
   //Prescaler is set as follows [CS22, CS21, CS20]:
   // 000 - Stopped
@@ -46,7 +48,6 @@ void setupTIM1_ISR(){
   // 110 - divide by 256
   // 111 - divide by 1024
   TCCR2B |= ((1 << CS22) | (0 << CS21) | (0 << CS20)); //64
-  //Timer2 Overflow Interrupt Enable
   TIMSK2 |= (1 << TOIE2);
   TCNT2=tim2_start;
 
