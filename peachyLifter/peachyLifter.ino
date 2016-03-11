@@ -1,38 +1,42 @@
 #include "Arduino.h"
+#include "Flagger.h"
 #define ledPin 7
 
 //16MHz clock, with prescaler of 64
 //To get a "tick" time of 200us we do:
 // <time per tick> * <Clock frequency> / <prescaler>
 // 200e-6 * 16e6 / 64 = 50
-float cpu_freq = 16e6;
-float tick_time = 200e-6;
-uint8_t tim2_prescaler = 64;
-int8_t tim2_start = 256-tick_time*cpu_freq/prescaler;
+#define CPU_FREQ 16e6
+#define TICK_TIME 200e-6
+#define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
+#define TIM2_START 256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER
+//int8_t g_tim2_start = 256-g_tick_time*g_cpu_freq/g_tim2_prescaler;
 //tim2_start = -50; note negative works here due to 2's compliment. (-50 == 206) in the 8 bit data types
 
 uint16_t interrupt_count=0;
+
+Flagger g_Flagger;
 
 void setup()
 {
 	Serial.begin(115200);
 	pinMode(12,INPUT_PULLUP); 
 	pinMode(ledPin,OUTPUT); 
+
 	noInterrupts();
-	setupTIM1_ISR();
+	setupTIM2_ISR();
   printSetups();
-	//interrupt setups here
   interrupts();
 }
 
 void printSetups(){
   Serial.print("tim2_start is:");
-  Serial.println(tim2_start);
+  Serial.println(TIM2_START);
   Serial.print("prescaler is:");
-  Serial.println(tim2_prescaler);
+  Serial.println(TIM2_PRESCALER);
 }
 
-void setupTIM1_ISR(){
+void setupTIM2_ISR(){
 	//Register definitions found Page ~157 in datasheet
 	//TCNT2   //Timer/Counter Register. The actual timer value is stored here.
   //TCCR2B  //Timer Control Register (Prescaler here)
@@ -49,14 +53,15 @@ void setupTIM1_ISR(){
   // 111 - divide by 1024
   TCCR2B |= ((1 << CS22) | (0 << CS21) | (0 << CS20)); //64
   TIMSK2 |= (1 << TOIE2);
-  TCNT2=tim2_start;
+  TCNT2=TIM2_START;
 
 }
 
 ISR(TIMER2_OVF_vect){
-  TCNT2=tim2_start; //Reset the timer to start value for consistant roll overs
+  TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
 	digitalWrite(ledPin, digitalRead(ledPin) ^ 1); //Toggle LED on each interrupt cycle
   interrupt_count++;
+	g_Flagger.tick();
 
   //Flag cleared automagically
 }
