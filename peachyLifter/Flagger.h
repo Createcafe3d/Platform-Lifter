@@ -37,7 +37,7 @@ class Flagger
 		}
 
 		void decrimentFlag(uint8_t id){
-			if (m_flags[id].enabled)
+			if (m_flags[id].flag_state)
 				m_flags[id].flag_state--;
 		}
 
@@ -45,6 +45,10 @@ class Flagger
 			int i=0;
 			while (m_flags[i].enabled){
 				m_flags[i].current_count++;
+				if (m_flags[i].current_count==m_flags[i].trig_count){
+					m_flags[i].flag_state++;
+					m_flags[i].current_count=0;
+				}
 				i++;
 			}
 		}
