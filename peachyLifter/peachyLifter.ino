@@ -6,16 +6,14 @@
 //To get a "tick" time of 200us we do:
 // <time per tick> * <Clock frequency> / <prescaler>
 // 200e-6 * 16e6 / 64 = 50
-#define CPU_FREQ 16e6
-#define TICK_TIME 200e-6
+#define CPU_FREQ 16e6 //MHz
+#define TICK_TIME 200e-6 //seconds
 #define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
 #define TIM2_START 256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER
-//int8_t g_tim2_start = 256-g_tick_time*g_cpu_freq/g_tim2_prescaler;
-//tim2_start = -50; note negative works here due to 2's compliment. (-50 == 206) in the 8 bit data types
 
-uint16_t interrupt_count=0;
-
+uint16_t g_interrupt_count=0;
 Flagger g_Flagger;
+uint8_t g_1000ms_flag = g_Flagger.registerFlag(5000);
 
 void setup()
 {
@@ -59,21 +57,23 @@ void setupTIM2_ISR(){
 
 ISR(TIMER2_OVF_vect){
   TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
-	digitalWrite(ledPin, digitalRead(ledPin) ^ 1); //Toggle LED on each interrupt cycle
-  interrupt_count++;
+  g_interrupt_count++;
 	g_Flagger.tick();
-
   //Flag cleared automagically
 }
 
 void loop()
 {
-  if (interrupt_count>5000){
+  if (g_interrupt_count>5000){
     Serial.print("Interrupt Count=");
-    Serial.println(interrupt_count);
-    interrupt_count=0;
+    Serial.println(g_interrupt_count);
+    g_interrupt_count=0;
   }
-  int bar = 0;
 
+	//This happens once a second
+	if (g_Flagger.getFlag(g_1000ms_flag)){
+		digitalWrite(ledPin, digitalRead(ledPin) ^ 1); //Toggle LED
+		g_Flagger.clearFlag(g_1000ms_flag);
+	}
 }
 
