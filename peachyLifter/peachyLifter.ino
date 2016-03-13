@@ -53,8 +53,8 @@ void setupTIM2_ISR(){
   // 110 - divide by 256
   // 111 - divide by 1024
   TCCR2B |= ((1 << CS22) | (0 << CS21) | (0 << CS20)); //64
-  TIMSK2 |= (1 << TOIE2);
-  TCNT2=TIM2_START;
+  TIMSK2 |= (1 << TOIE2); //Enable the Timer2 interrupt
+  TCNT2=TIM2_START; //Preload it to the correct time for consistent roll overs
 }
 
 ISR(TIMER2_OVF_vect){

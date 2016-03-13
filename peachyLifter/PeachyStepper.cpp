@@ -11,19 +11,19 @@ void digitalWrite(unsigned char,unsigned char){} //Stub it out for testing
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
 	(byte & 0x80 ? 1 : 0), \
-  (byte & 0x40 ? 1 : 0), \
-  (byte & 0x20 ? 1 : 0), \
-  (byte & 0x10 ? 1 : 0), \
-  (byte & 0x08 ? 1 : 0), \
-  (byte & 0x04 ? 1 : 0), \
-  (byte & 0x02 ? 1 : 0), \
-  (byte & 0x01 ? 1 : 0) 
+(byte & 0x40 ? 1 : 0), \
+(byte & 0x20 ? 1 : 0), \
+(byte & 0x10 ? 1 : 0), \
+(byte & 0x08 ? 1 : 0), \
+(byte & 0x04 ? 1 : 0), \
+(byte & 0x02 ? 1 : 0), \
+(byte & 0x01 ? 1 : 0) 
 
 void print_status(PeachyStepper *Stepper){
 	uint8_t stepper_state;
 
 	stepper_state = Stepper->getState();
-	printf("Stepper_state: "BYTETOBINARYPATTERN"\n", BYTETOBINARY(stepper_state));
+	printf("Stepper_state: " BYTETOBINARYPATTERN "\n", BYTETOBINARY(stepper_state));
 }
 
 void print_positions(PeachyStepper *Stepper){
@@ -106,7 +106,7 @@ int main(){
 	test_ustepping(&MyStepper);
 	//test_move_zero();
 
-	
+
 	return 0;
 }
 

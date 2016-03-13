@@ -52,7 +52,7 @@ class PeachyStepper
 				m_commanded_position+=steps;
 		}
 
-		void move (uint8_t direction){
+		void move(uint8_t direction){
 			//direction 0 or 1 depending on the wiring
 			if (direction == STEPPER_DOWN)
 				m_commanded_position--;
@@ -81,7 +81,7 @@ class PeachyStepper
 		//Function called by the timer interrupt 
 		void micro_step(){
 			m_microstep_counter=(m_microstep_counter+1)%(STEPPER_U_STEPS+1); //0->STEPPER_U_STEPS inclusive
-			
+
 			if (m_current_position == m_commanded_position){
 				//Switch to holding torque mode
 				m_direction=STEPPER_STABLE;
@@ -94,20 +94,10 @@ class PeachyStepper
 				else{ 
 					pins_on();
 				}
-				
+
 			}
 			else if (m_microstep_counter==0){
-				if (m_current_position < m_commanded_position){
-					m_direction = STEPPER_UP;
-					m_current_position++;
-				}
-				else{ // <
-					m_direction = STEPPER_DOWN;
-					m_current_position--;
-				}
-
-				shift_step();
-				assign_bits();
+				step();
 			}
 		}
 
