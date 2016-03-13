@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "Flagger.h"
+#include "PeachyFlagger.h"
 #include "PeachyStepper.h"
 
 //g_Flagger and g_Stepper are found in PeachyTimer2Interrupt.h

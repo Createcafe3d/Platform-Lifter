@@ -12,10 +12,10 @@ struct Flag_info{
 	uint8_t enabled;
 };
 
-class Flagger
+class PeachyFlagger
 {
 	public:
-		Flagger(){
+		PeachyFlagger(){
 			for (int i=0; i<MAX_NUM_FLAGS; i++){
 				m_flags[i].trig_count=0;	
 				m_flags[i].flag_state=0;	

@@ -1,7 +1,7 @@
-#include "Flagger.h"
+#include "PeachyFlagger.h"
 
 /*
-Flagger::registerFlag(uint16_t trig_count){
+PeachyFlagger::registerFlag(uint16_t trig_count){
 
 }
 */
@@ -18,7 +18,7 @@ int main()
 	uint8_t flag_status;
 
 	cout << "Hello World" << endl;
-	Flagger MyFlagger;
+	PeachyFlagger MyFlagger;
 	flag_id = MyFlagger.registerFlag(20);
 	cout << "flag_id: "<< (int)flag_id << endl;
 	flag_id2 = MyFlagger.registerFlag(30);
