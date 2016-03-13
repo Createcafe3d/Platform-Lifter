@@ -6,9 +6,6 @@
 #define STEPPER_PIN2 10
 #define STEPPER_PIN3 11
 
-
-
-
 #ifndef _PEACHYSTEPPER_H_
 #define _PEACHYSTEPPER_H_
 
@@ -17,8 +14,13 @@
 #define TRUE 1
 #define FALSE 0
 
-#define MASK_TOPBIT 0x80
-#define MASK_BOTTOMBIT 0x01
+#define MASK_TOPBIT 0b10000000
+#define MASK_BOTBIT 0b00000001
+
+#define MASK_PIN1 0b00000010
+#define MASK_PIN2 0b00001000
+#define MASK_PIN3 0b00100000
+#define MASK_PIN4 0b10000000
 
 #include <stdint.h>
 class PeachyStepper
@@ -47,6 +49,16 @@ class PeachyStepper
 				assign_bits();
 			}
 
+		void zero_position(){
+		}
+
+	private:
+		uint32_t m_current_position;
+		uint8_t m_direction;
+		uint8_t m_hold_torque;
+		uint8_t m_step_state;
+		uint32_t m_commanded_position;
+
 		void shift_step(){
 			uint8_t carry_bit;
 
@@ -57,15 +69,16 @@ class PeachyStepper
 					m_step_state+=0x01;//Bring in the carry
 			}
 			else{ //DOWN
-				carry_bit=m_step_state && MASK_BOTTOMBIT;
+				carry_bit=m_step_state && MASK_BOTBIT;
 				m_step_state=m_step_state>>1; //Shift down
 				if (carry_bit)
 					m_step_state+=0x80;//Add in the carry at the top
 			}
 		}
 
-		void write_pins(){
-			// 4 pin servos only:
+		void assign_bits()
+		{
+			// 4 pin servos "on" steps:
 			// [1 0 0 0] 0 
 			// [1 1 0 0] 1 
 			// [0 1 0 0] 2 
@@ -74,111 +87,19 @@ class PeachyStepper
 			// [0 0 1 1] 5 
 			// [0 0 0 1] 6 
 			// [1 0 0 1] 7 
-			switch(m_step_position){
-				case 0:
-					//0 pin ON (startup only)
-					//3 pin OFF
-					digitalWrite(STEPPER_PIN0,1);
-					digitalWrite(STEPPER_PIN1,0);
-					digitalWrite(STEPPER_PIN2,0);
-					digitalWrite(STEPPER_PIN3,0);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position=7;
-					break;
-				case 1:
-					//1 pin ON
-					digitalWrite(STEPPER_PIN0,1);
-					digitalWrite(STEPPER_PIN1,1);
-					digitalWrite(STEPPER_PIN2,0);
-					digitalWrite(STEPPER_PIN3,0);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 2:
-					//0 pin OFF
-					digitalWrite(STEPPER_PIN0,0);
-					digitalWrite(STEPPER_PIN1,1);
-					digitalWrite(STEPPER_PIN2,0);
-					digitalWrite(STEPPER_PIN3,0);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 3:
-					//2 pin ON
-					digitalWrite(STEPPER_PIN0,0);
-					digitalWrite(STEPPER_PIN1,1);
-					digitalWrite(STEPPER_PIN2,1);
-					digitalWrite(STEPPER_PIN3,0);
-					m_step_position++;
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 4:
-					//1 pin OFF
-					digitalWrite(STEPPER_PIN0,0);
-					digitalWrite(STEPPER_PIN1,0);
-					digitalWrite(STEPPER_PIN2,1);
-					digitalWrite(STEPPER_PIN3,0);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 5:
-					//3 pin ON
-					digitalWrite(STEPPER_PIN0,0);
-					digitalWrite(STEPPER_PIN1,0);
-					digitalWrite(STEPPER_PIN2,1);
-					digitalWrite(STEPPER_PIN3,1);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 6:
-					//2 pin OFF
-					digitalWrite(STEPPER_PIN0,0);
-					digitalWrite(STEPPER_PIN1,0);
-					digitalWrite(STEPPER_PIN2,0);
-					digitalWrite(STEPPER_PIN3,1);
-					if (m_direction==UP)
-						m_step_position++;
-					else
-						m_step_position--;
-					break;
-				case 7:
-					//0 pin ON
-					digitalWrite(STEPPER_PIN0,1);
-					digitalWrite(STEPPER_PIN1,0);
-					digitalWrite(STEPPER_PIN2,0);
-					digitalWrite(STEPPER_PIN3,1);
-					if (m_direction==UP)
-						m_step_position=0;
-					else
-						m_step_position--;
-					break;
+			uint8_t tmp_bit;
+
+			tmp_bit = |(m_step_state && MASK_PIN1);
+			digitalWrite(STEPPER_PIN0,tmp_bit);
+
+			tmp_bit = |(m_step_state && MASK_PIN2);
+			digitalWrite(STEPPER_PIN1,tmp_bit);
+			
+			tmp_bit = |(m_step_state && MASK_PIN3);
+			digitalWrite(STEPPER_PIN2,tmp_bit);
+
+			tmp_bit = |(m_step_state && MASK_PIN4);
+			digitalWrite(STEPPER_PIN3,tmp_bit);
 		}
-
-		void zero_position(){
-
-		}
-
-	private:
-		uint32_t m_current_position;
-		uint8_t m_step_position;
-		uint8_t m_direction;
-		uint8_t m_hold_torque;
-		uint8_t m_step_state;
-		uint32_t m_commanded_position;
-
-
 
 #endif
