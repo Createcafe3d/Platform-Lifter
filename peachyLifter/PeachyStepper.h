@@ -80,7 +80,7 @@ class PeachyStepper
 
 		//Function called by the timer interrupt 
 		void micro_step(){
-			m_microstep_counter=(m_microstep_counter%STEPPER_U_STEPS)+1; //0->STEPPER_U_STEPS inclusive
+			m_microstep_counter=(m_microstep_counter+1)%(STEPPER_U_STEPS+1); //0->STEPPER_U_STEPS inclusive
 			
 			if (m_current_position == m_commanded_position){
 				//Switch to holding torque mode

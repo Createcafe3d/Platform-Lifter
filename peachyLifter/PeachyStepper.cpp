@@ -82,6 +82,21 @@ void test_stop(PeachyStepper *Stepper){
 	print_positions(Stepper);
 }
 
+void test_ustepping(PeachyStepper *Stepper){
+	printf("\n Moving 4 steps UP with microstepping \n");
+	print_status(Stepper);
+	print_positions(Stepper);
+
+	Stepper->move(STEPPER_UP,4);
+	for (int i=0; i<18; i++){
+		Stepper->micro_step();
+		print_status(Stepper);
+		print_positions(Stepper);
+	}
+	
+
+}
+
 int main(){
 
 	PeachyStepper MyStepper;
@@ -90,6 +105,7 @@ int main(){
 	test_basicSteps(&MyStepper);
 	test_move(&MyStepper);
 	test_stop(&MyStepper);
+	test_ustepping(&MyStepper);
 	//test_move_zero();
 
 	

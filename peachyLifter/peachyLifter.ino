@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Flagger.h"
+#include "PeachyStepper.h"
 #define ledPin 7
 
 //16MHz clock, with prescaler of 64
@@ -13,6 +14,8 @@
 
 uint16_t g_interrupt_count=0;
 Flagger g_Flagger;
+PeachyStepper g_Stepper;
+
 uint8_t g_1000ms_flag = g_Flagger.registerFlag(5000);
 
 void setup()
@@ -58,6 +61,7 @@ ISR(TIMER2_OVF_vect){
   TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
   g_interrupt_count++;
 	g_Flagger.tick();
+  g_Stepper.micro_step();
   //Flag cleared automagically
 }
 
