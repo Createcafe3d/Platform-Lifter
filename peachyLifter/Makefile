@@ -1,2 +1,2 @@
 all:
-	g++ -D_TEST testFlagger.cpp -o testFlag
+	g++ -D _TEST_FLAGGER Flagger.cpp -o testFlag

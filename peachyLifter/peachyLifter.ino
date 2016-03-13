@@ -52,7 +52,6 @@ void setupTIM2_ISR(){
   TCCR2B |= ((1 << CS22) | (0 << CS21) | (0 << CS20)); //64
   TIMSK2 |= (1 << TOIE2);
   TCNT2=TIM2_START;
-
 }
 
 ISR(TIMER2_OVF_vect){
