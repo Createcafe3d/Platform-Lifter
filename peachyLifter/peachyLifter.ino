@@ -10,7 +10,7 @@
 #define CPU_FREQ 16e6 //MHz
 #define TICK_TIME 200e-6 //seconds
 #define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
-#define TIM2_START 256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER
+#define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER)
 
 uint16_t g_interrupt_count=0;
 Flagger g_Flagger;
@@ -67,6 +67,7 @@ ISR(TIMER2_OVF_vect){
 
 void loop()
 {
+  uint8_t move_direction;
   if (g_interrupt_count>5000){
     Serial.print("Interrupt Count=");
     Serial.println(g_interrupt_count);
@@ -75,7 +76,9 @@ void loop()
 
 	//This happens once a second
 	if (g_Flagger.getFlag(g_1000ms_flag)){
-		digitalWrite(ledPin, digitalRead(ledPin) ^ 1); //Toggle LED
+    move_direction=digitalRead(ledPin);
+    g_Stepper.move(move_direction,200);
+		digitalWrite(ledPin, move_direction ^ 1); //Toggle LED
 		g_Flagger.clearFlag(g_1000ms_flag);
 	}
 }

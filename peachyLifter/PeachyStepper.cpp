@@ -93,8 +93,6 @@ void test_ustepping(PeachyStepper *Stepper){
 		print_status(Stepper);
 		print_positions(Stepper);
 	}
-	
-
 }
 
 int main(){
