@@ -5,16 +5,20 @@ Stepper motor controlled print platform - Controlled by an arduino
 There are 2 classes that do all of the heavy lifting (har har). They are:
 
 ###PeachyFlagger
+Setup defines found in PeachyStepper.h:
 ```cpp
-MyFlagger = PeachyFlagger(); //Default max 8 flags
+#define MAX_NUM_FLAGS 8
+```
+
+The public functions are as follows:
+```cpp
+MyFlagger = PeachyFlagger(); //Default max 8 flags defined in the header
 
 //To register a flag, see below. Internally it checks it's own counters and sets the flag after "trigger_count" ticks
 uint8_t flag_id = MyFlagger.registerFlag(trigger_count); //A tick is a single Timer2 interrupt (default 200us)
 
 uint8_t MyFlagger.getFlag(flag_id); //returns the flag variable as a count of how many times that flag has been raised
-
 MyFlagger.clearFlag(flag_id); //Clear the flags once you dealt with it
-
 MyFlagger.decrimentFlag(flag_id); //Useful for if flags pile up and you need to do something each time
 
 MyFlagger.tick(); //time tick, usually called inside the timer2 interrupt
@@ -32,6 +36,7 @@ Setup defines found in PeachyStepper.h:
 #define STEPPER_PIN2 10
 #define STEPPER_PIN3 11
 
+#define STEPPER_STABLE 2
 #define STEPPER_UP 1
 #define STEPPER_DOWN 0
 ```

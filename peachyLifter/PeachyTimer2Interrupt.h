@@ -9,8 +9,8 @@
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER)
 
 uint16_t g_interrupt_count=0;
-PeachyFlagger g_Flagger();
-PeachyStepper g_Stepper();
+PeachyFlagger g_Flagger;
+PeachyStepper g_Stepper;
 
 void setupTIM2_ISR(){
 	//Register definitions found Page ~157 in datasheet
