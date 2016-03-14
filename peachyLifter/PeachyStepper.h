@@ -42,14 +42,16 @@ class PeachyStepper
 
 		void moveTo(uint32_t position){
 			m_commanded_position=position;
+      //setDirection();
 		}
-
+   
 		void move(uint8_t direction,uint32_t steps){
 			//direction 0 or 1 depending on the wiring
 			if (direction == STEPPER_DOWN)
 				m_commanded_position-=steps;
 			else if (direction == STEPPER_UP)
 				m_commanded_position+=steps;
+      //setDirection();
 		}
 
 		void move(uint8_t direction){
@@ -58,6 +60,7 @@ class PeachyStepper
 				m_commanded_position--;
 			else if (direction == STEPPER_UP)
 				m_commanded_position++;
+      //setDirection();
 		}
 
 		void step(){
@@ -125,6 +128,7 @@ class PeachyStepper
 		}
 
 		uint8_t getDirection(){
+      delayMicroseconds(1); // I don't know why this is needed, but the loops hang without this.
 			return m_direction;
 		}
 
@@ -135,6 +139,20 @@ class PeachyStepper
 		uint8_t m_microstep_counter;
 		int32_t m_commanded_position;
 		int32_t m_current_position;
+
+    void setDirection(){
+      if (m_current_position == m_commanded_position){
+        m_direction=STEPPER_STABLE;
+      }
+      else {
+        if (m_current_position < m_commanded_position){
+          m_direction = STEPPER_UP;
+        }
+        else{ // <
+          m_direction = STEPPER_DOWN;
+        }
+      }
+    }
 
 		void shift_step(){
 			uint8_t carry_bit;
