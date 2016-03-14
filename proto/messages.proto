@@ -1,0 +1,33 @@
+// A very simple protocol definition, consisting of only
+// one message.
+
+syntax = "proto2";
+
+message PrinterStatus {
+    required uint32 targetHeightMicrometer = 1;
+    required uint32 currentHeightMicrometer = 2;
+    required bool waitingForNextLayerHeight = 3;
+    enum Status {
+        NEW = 0;
+        PRINTING = 1;
+        WAITING = 2;
+        COMPLETE = 3;
+      }
+    required Status status = 4;
+}
+
+message DripRecorded {
+  required uint32 drips = 1;
+}
+
+message SetDripCount {
+  required uint32 drips = 1;
+}
+
+message MoveToDripCount {
+  required uint32 drips = 1;
+}
+
+message SetCurrentHeight {
+    required uint32 heightMicrometers = 1;
+}
