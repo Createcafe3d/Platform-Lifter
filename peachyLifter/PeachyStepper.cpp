@@ -97,7 +97,7 @@ void test_ustepping(PeachyStepper *Stepper){
 
 int main(){
 
-	PeachyStepper MyStepper;
+	PeachyStepper MyStepper(2);
 	print_status(&MyStepper);
 
 	test_basicSteps(&MyStepper);

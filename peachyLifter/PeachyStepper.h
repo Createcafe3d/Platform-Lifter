@@ -4,10 +4,10 @@
 #define _PEACHYSTEPPER_H_
 
 //The digital pins used for the stepper driver
-#define STEPPER_PIN0 8
-#define STEPPER_PIN1 9
-#define STEPPER_PIN2 10
-#define STEPPER_PIN3 11
+#define STEPPER_PIN0 2
+#define STEPPER_PIN1 3
+#define STEPPER_PIN2 4
+#define STEPPER_PIN3 5
 
 // How many times step gets called (minus one) between actual motor steps
 // These steps include the 0th step,
@@ -31,7 +31,7 @@
 class PeachyStepper
 {
 	public:
-		PeachyStepper(uint8_t hold_torque = STEPPER_U_STEPS){
+		PeachyStepper(uint8_t hold_torque = 0){
 			m_current_position=0;
 			m_commanded_position=0;
 			m_direction = STEPPER_STABLE;
@@ -86,8 +86,10 @@ class PeachyStepper
 				//Switch to holding torque mode
 				m_direction=STEPPER_STABLE;
 
-				//ie: hold_torque==2, counter==3, microsteps==0->3 -> pins off for that one cycle 
-				if (m_microstep_counter>m_hold_torque){ 
+				//0 hold torque, always on
+				//2 hold torque half on
+				//3 hold torque 1/4 on
+				if (m_microstep_counter<m_hold_torque){ 
 					pins_off();
 				}
 				//ie: otherwise keep those pins on for the other 3 cycles (0,1,2)

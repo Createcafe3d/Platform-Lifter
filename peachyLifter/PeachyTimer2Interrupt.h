@@ -1,4 +1,7 @@
 
+#include "PeachyFlagger.h"
+#include "PeachyStepper.h"
+
 //16MHz clock, with prescaler of 64
 //To get a "tick" time of 200us we do:
 // <time per tick> * <Clock frequency> / <prescaler>
@@ -10,7 +13,7 @@
 
 uint16_t g_interrupt_count=0;
 PeachyFlagger g_Flagger;
-PeachyStepper g_Stepper;
+PeachyStepper g_Stepper(4); //holding torque strength of X off microsteps (out of total micro steps, default 4)
 
 void setupTIM2_ISR(){
 	//Register definitions found Page ~157 in datasheet

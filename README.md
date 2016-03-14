@@ -44,8 +44,15 @@ Setup defines found in PeachyStepper.h:
 The public functions are as follows:
 ```cpp
 
-MyStepper = PeachyStepper(); //Defaulting to 4 microsteps per motor step
-MyStepper = PeachyStepper(2); //2 microsteps per motor step
+//Default number of micro steps is 4:
+//You can set the holding torque as a number of "no power" ticks.
+// ie: holding torque of 0 means it will be always on
+// ie: holding torque of 2 means it will be on for 2, off for 2
+// ie: holding torque of 3 means it will be on 1 time every 4 micro ticks
+//Default holding torque is 0 (max power)
+//
+MyStepper = PeachyStepper(); //Default holding torque of 0 (always on)
+MyStepper = PeachyStepper(2); //holding torque of 2 (2/4 micro steps coil is OFF)
 
 MyStepper.getPosition(); //get Absolute motor position as a 32 bit int
 MyStepper.getCommandedPosition(); //get the position we are moving towards
