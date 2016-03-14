@@ -40,7 +40,7 @@ class PeachyStepper
 			m_microstep_counter = 0;
 		}
 
-		void moveTo(uint32_t position){
+		void moveTo(int32_t position){
 			m_commanded_position=position;
       //setDirection();
 		}
@@ -53,6 +53,14 @@ class PeachyStepper
 				m_commanded_position+=steps;
       //setDirection();
 		}
+
+    void waitForMove(){
+      uint8_t stepper_direction;
+      stepper_direction = getDirection();
+      while(stepper_direction != STEPPER_STABLE){
+        stepper_direction = getDirection();
+      } 
+    }
 
 		void move(uint8_t direction){
 			//direction 0 or 1 depending on the wiring
@@ -82,7 +90,7 @@ class PeachyStepper
 		}
 
 		//Function called by the timer interrupt 
-		void micro_step(){
+		void microStep(){
 			m_microstep_counter=(m_microstep_counter+1)%(STEPPER_U_STEPS+1); //0->STEPPER_U_STEPS inclusive
 
 			if (m_current_position == m_commanded_position){

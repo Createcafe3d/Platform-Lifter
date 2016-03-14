@@ -8,6 +8,12 @@
 #define DRIP_PIN A4
 #define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
 #define RESET_BUTTON_PIN 11
+#define HEIGHT_BUTTON_PIN 10
+#define HEIGHT_ANALOG_PIN A3
+
+#define ANALOG_SCALER 10 //How much to multiply up the Analog reading by. Analog values range from 0->1023
+#define STATE_ANALOG 1
+#define STATE_NORMAL 0
 
 //Flag Tick time == 200us
 // 5000 == 1 second
@@ -15,10 +21,11 @@
 
 uint8_t g_1000ms_flag = g_Flagger.registerFlag(5000);
 uint8_t g_drip_flag = g_Flagger.registerFlag(1000);
-uint8_t g_buttons_flag = g_Flagger.registerFlag(2500);
-void findUpperLimit();
+uint8_t g_buttons_flag = g_Flagger.registerFlag(2000);
+uint8_t g_analog_flag = g_Flagger.registerFlag(2000);
 
 uint8_t g_drips_requested=0;
+uint8_t g_system_state=STATE_NORMAL;
 
 void setup()
 {
@@ -26,6 +33,7 @@ void setup()
 	pinMode(LED_PIN,OUTPUT); 
   pinMode(DRIP_PIN,OUTPUT);
   pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
+  pinMode(HEIGHT_BUTTON_PIN,INPUT_PULLUP);
 
 	noInterrupts();
 	setupTIM2_ISR();
@@ -36,11 +44,16 @@ void setup()
   findUpperLimit();
 }
 
-void button_handler(){
+void buttonHandler(){
   if (g_Flagger.getFlag(g_buttons_flag)){
     if (digitalRead(RESET_BUTTON_PIN) == 0){
       g_Stepper.stop();
       findUpperLimit();
+    }
+    if (digitalRead(HEIGHT_BUTTON_PIN) == 0){
+    //while(digitalRead(HEIGHT_BUTTON_PIN == 0)){
+      g_Stepper.stop();
+      g_system_state=STATE_ANALOG;
     }
     g_Flagger.clearFlag(g_buttons_flag);
   }
@@ -56,11 +69,7 @@ void findUpperLimit(){
   }
     
   g_Stepper.move(STEPPER_DOWN,500);
-  stepper_direction = g_Stepper.getDirection();
-  while(stepper_direction != STEPPER_STABLE){
-    stepper_direction = g_Stepper.getDirection();
-  } 
-
+  g_Stepper.waitForMove();
   g_Stepper.zeroPosition();
 }
 
@@ -71,9 +80,8 @@ void printSetups(){
   Serial.println(TIM2_PRESCALER);
 }
 
-void drip_handler(){
-  
-  //digitalWrite(DRIP_PIN,1);
+void dripHandler(){
+
   if (g_Flagger.getFlag(g_drip_flag)){
     if (g_drips_requested > 0){
       g_drips_requested--;
@@ -83,6 +91,23 @@ void drip_handler(){
         digitalWrite(DRIP_PIN,0);
       }
       g_Flagger.clearFlag(g_drip_flag);
+    }
+  }
+}
+
+void analogHeightHandler(){
+  uint16_t analog_result;
+  
+  if (g_system_state==STATE_ANALOG){
+    findUpperLimit(); //blocking
+    
+    while(g_system_state==STATE_ANALOG){
+      analog_result = analogRead(HEIGHT_ANALOG_PIN);
+      Serial.println(analog_result);
+      g_Stepper.moveTo(0-(int16_t)analog_result*ANALOG_SCALER); //0 minus so that we travel DOWN to absolute positions, relative to 0
+      g_Stepper.waitForMove();
+      while (digitalRead(HEIGHT_BUTTON_PIN)==0)
+        g_system_state=STATE_NORMAL;
     }
   }
 }
@@ -100,8 +125,9 @@ void loop()
     g_interrupt_count=0;
   }
 
-  drip_handler();
-  button_handler();
+  dripHandler();
+  buttonHandler();
+  analogHeightHandler();
 
 	//This happens once a second
 	if (g_Flagger.getFlag(g_1000ms_flag)){

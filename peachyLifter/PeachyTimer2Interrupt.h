@@ -53,6 +53,6 @@ ISR(TIMER2_OVF_vect){
   TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
   g_interrupt_count++;
 	g_Flagger.tick();
-  g_Stepper.micro_step();
+  g_Stepper.microStep();
   //Flag cleared automagically
 }
