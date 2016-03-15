@@ -10,10 +10,10 @@
 #define TICK_10MS		0.01/TICK_TIME
 #define TICK_1MS		0.001/TICK_TIME
 
-#define DRIP_TIME					 1.5 * TICK_100MS //100ms dead time between drips by design
-#define BUTTON_TIME				 TICK_10MS
-#define ANALOG_TIME				 TICK_10MS
-#define LIMIT_SWITCH_TIME  5 * TICK_1MS
+#define DRIP_TIME					 1.5 * TICK_100MS //100ms minimum dead time between drips by design
+#define BUTTON_TIME				 5 * TICK_10MS
+#define ANALOG_TIME				 5 * TICK_10MS
+#define LIMIT_SWITCH_TIME  5 * TICK_10MS
 
 uint8_t g_1000ms_flag = g_Flagger.registerFlag(TICK_1000MS);
 uint8_t g_drip_flag = g_Flagger.registerFlag(DRIP_TIME);
@@ -21,11 +21,29 @@ uint8_t g_buttons_flag = g_Flagger.registerFlag(BUTTON_TIME);
 uint8_t g_analog_flag = g_Flagger.registerFlag(ANALOG_TIME);
 uint8_t g_limit_switch_flag = g_Flagger.registerFlag(LIMIT_SWITCH_TIME);
 
+//This happens once a second
+void oneSecondHandler(){
+  uint8_t move_direction;
+	if (g_Flagger.getFlag(g_1000ms_flag)){
+    g_Flagger.clearFlag(g_1000ms_flag);
+
+    Serial.println("ONE SECOND");
+    move_direction=digitalRead(LED_BLUE_PIN);
+    //g_Stepper.move(move_direction,500);
+		digitalWrite(LED_BLUE_PIN, move_direction ^ 1); //Toggle LED
+    g_drips_requested = 3;
+	}
+}
+
 void limitSwitchHandler(){
   if (g_Flagger.getFlag(g_limit_switch_flag)){
-		if (digitalRead(LIMIT_PIN)){
+		if (!digitalRead(LIMIT_PIN)){
 			g_Stepper.stop();
+			digitalWrite(LED_RED_PIN,1);
 		}
+		else
+			digitalWrite(LED_RED_PIN,0);
+    g_Flagger.clearFlag(g_limit_switch_flag);
 	}
 }
 

@@ -4,6 +4,7 @@
 #define LIMIT_PIN 12
 #define DRIP_PIN A4
 #define RESET_BUTTON_PIN 11
+#define START_BUTTON_PIN 9
 #define HEIGHT_BUTTON_PIN 10
 #define HEIGHT_ANALOG_PIN A0
 
@@ -21,11 +22,11 @@
 // <time per tick> * <Clock frequency> / <prescaler>
 // 200e-6 * 16e6 / 64 = 50
 // WARNING: that number must be between 0-255
-#define CPU_FREQ 16e6 //MHz
+#define CPU_FREQ 16e6 //Hz
 #define TICK_TIME 500e-6 //seconds
-#define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
+#define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function settings
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER) //Must be less than 256
 //Example:
-//Flag Tick time == 200us
-// 5000 == 1 second
-// 500 == 100ms
+//Flag Tick time == 200us (200e-6)
+// 5000 ticks == 1 second
+// 500 ticks == 100ms

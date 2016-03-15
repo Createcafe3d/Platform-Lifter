@@ -2,12 +2,11 @@
 #include "PeachyFlagger.h"
 #include "PeachyStepper.h"
 
-
 uint16_t g_interrupt_count=0;
-PeachyFlagger g_Flagger;
 
 //0 -> Full strenght holding torque. 3-> 1/4 holding torque. 4-> coils off when not moving
 PeachyStepper g_Stepper(0); //holding torque strength as number of "off" microsteps (out of total micro steps)
+PeachyFlagger g_Flagger;
 
 void setupTIM2_ISR(){
 	//Register definitions found Page ~157 in datasheet

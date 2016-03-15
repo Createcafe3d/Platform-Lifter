@@ -53,17 +53,7 @@ void loop()
   dripHandler();
   buttonHandler();
   analogHeightHandler();
-
-	//This happens once a second
-	if (g_Flagger.getFlag(g_1000ms_flag)){
-    Serial.println("ONE SECOND");
-    g_Flagger.clearFlag(g_1000ms_flag);
-    move_direction=digitalRead(LED_BLUE_PIN);
-    g_Stepper.move(move_direction,500);
-		digitalWrite(LED_BLUE_PIN, move_direction ^ 1); //Toggle LED
-    g_drips_requested = 3;
-	}
- 
+	oneSecondHandler();
 }
 
 //***********************************
