@@ -6,7 +6,7 @@
 uint8_t g_drips_requested=0;
 uint8_t g_system_state=STATE_NORMAL;
 
-//function prototypes (for now)
+//function prototypes
 void findUpperLimit();
 void goToNewStartHeight();
 void printSetups();
@@ -19,7 +19,8 @@ void printSetups();
 void setup()
 {
 	pinMode(LIMIT_PIN,INPUT_PULLUP); 
-	pinMode(LED_PIN,OUTPUT); 
+	pinMode(LED_RED_PIN,OUTPUT); 
+	pinMode(LED_BLUE_PIN,OUTPUT); 
   pinMode(DRIP_PIN,OUTPUT);
   pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
   pinMode(HEIGHT_BUTTON_PIN,INPUT_PULLUP);
@@ -31,6 +32,7 @@ void setup()
   
   Serial.begin(115200);
   findUpperLimit();
+	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
 }
 
 void loop()
@@ -39,7 +41,6 @@ void loop()
   uint16_t tmp_count;
   uint8_t stepper_direction;
   
-	g_Stepper.setSpeed(1);
   if (g_interrupt_count>5000){
     tmp_count=g_interrupt_count;
     Serial.print("Interrupt Count=");
@@ -48,19 +49,20 @@ void loop()
   }
 
 	//Handler functions found in FlaggerHandler.h
+	limitSwitchHandler();
   dripHandler();
   buttonHandler();
   analogHeightHandler();
 
-//	//This happens once a second
-//	if (g_Flagger.getFlag(g_1000ms_flag)){
-//    Serial.println("ONE SECOND");
-//    g_Flagger.clearFlag(g_1000ms_flag);
-//    move_direction=digitalRead(LED_PIN);
-//    g_Stepper.move(move_direction,100);
-//		digitalWrite(LED_PIN, move_direction ^ 1); //Toggle LED
-//    g_drips_requested = 3;
-//	}
+	//This happens once a second
+	if (g_Flagger.getFlag(g_1000ms_flag)){
+    Serial.println("ONE SECOND");
+    g_Flagger.clearFlag(g_1000ms_flag);
+    move_direction=digitalRead(LED_BLUE_PIN);
+    g_Stepper.move(move_direction,500);
+		digitalWrite(LED_BLUE_PIN, move_direction ^ 1); //Toggle LED
+    g_drips_requested = 3;
+	}
  
 }
 

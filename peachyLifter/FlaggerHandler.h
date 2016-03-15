@@ -3,10 +3,31 @@
 
 #include "PeachyDefines.h"
 
-uint8_t g_1000ms_flag = g_Flagger.registerFlag(5000);
-uint8_t g_drip_flag = g_Flagger.registerFlag(1000);
-uint8_t g_buttons_flag = g_Flagger.registerFlag(300);
-uint8_t g_analog_flag = g_Flagger.registerFlag(2000);
+//Quick Examples for steps -> seconds
+//TICK_TIME is defined in the PeachyDefines.h
+#define TICK_1000MS 1/TICK_TIME
+#define TICK_100MS	0.1/TICK_TIME
+#define TICK_10MS		0.01/TICK_TIME
+#define TICK_1MS		0.001/TICK_TIME
+
+#define DRIP_TIME					 1.5 * TICK_100MS //100ms dead time between drips by design
+#define BUTTON_TIME				 TICK_10MS
+#define ANALOG_TIME				 TICK_10MS
+#define LIMIT_SWITCH_TIME  5 * TICK_1MS
+
+uint8_t g_1000ms_flag = g_Flagger.registerFlag(TICK_1000MS);
+uint8_t g_drip_flag = g_Flagger.registerFlag(DRIP_TIME);
+uint8_t g_buttons_flag = g_Flagger.registerFlag(BUTTON_TIME);
+uint8_t g_analog_flag = g_Flagger.registerFlag(ANALOG_TIME);
+uint8_t g_limit_switch_flag = g_Flagger.registerFlag(LIMIT_SWITCH_TIME);
+
+void limitSwitchHandler(){
+  if (g_Flagger.getFlag(g_limit_switch_flag)){
+		if (digitalRead(LIMIT_PIN)){
+			g_Stepper.stop();
+		}
+	}
+}
 
 void buttonHandler(){
   if (g_Flagger.getFlag(g_buttons_flag)){

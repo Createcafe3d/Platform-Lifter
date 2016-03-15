@@ -1,5 +1,6 @@
 
-#define LED_PIN 7
+#define LED_RED_PIN 6
+#define LED_BLUE_PIN 7
 #define LIMIT_PIN 12
 #define DRIP_PIN A4
 #define RESET_BUTTON_PIN 11
@@ -14,6 +15,17 @@
 #define STATE_ANALOG 1
 #define STATE_NORMAL 0
 
+// Setting up the Timer Interrupt for a specific "tick" time:
+//16MHz clock, with prescaler of 64
+//To get a "tick" time of 200us we do:
+// <time per tick> * <Clock frequency> / <prescaler>
+// 200e-6 * 16e6 / 64 = 50
+// WARNING: that number must be between 0-255
+#define CPU_FREQ 16e6 //MHz
+#define TICK_TIME 500e-6 //seconds
+#define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
+#define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER) //Must be less than 256
+//Example:
 //Flag Tick time == 200us
 // 5000 == 1 second
 // 500 == 100ms
