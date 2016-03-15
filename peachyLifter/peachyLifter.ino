@@ -2,10 +2,6 @@
 
 #include "PeachyDefines.h"
 
-//globals
-uint8_t g_drips_requested=0;
-uint8_t g_system_state=STATE_NORMAL;
-
 //function prototypes
 void findUpperLimit();
 void goToNewStartHeight();
@@ -37,7 +33,6 @@ void setup()
 
 void loop()
 {
-  uint8_t move_direction;
   uint16_t tmp_count;
   uint8_t stepper_direction;
   
