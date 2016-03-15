@@ -24,6 +24,7 @@ uint8_t g_limit_switch_flag = g_Flagger.registerFlag(LIMIT_SWITCH_TIME);
 //globals
 uint8_t g_drips_requested=0;
 uint8_t g_system_state=STATE_NORMAL;
+int32_t g_print_height=0;
 
 //This happens once a second
 void oneSecondHandler(){
