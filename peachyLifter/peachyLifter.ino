@@ -90,8 +90,10 @@ void goToNewStartHeight()
   uint16_t analog_result;
   analog_result = analogRead(HEIGHT_ANALOG_PIN);
   Serial.println(analog_result);
-  g_Stepper.moveTo(0-(int16_t)analog_result*ANALOG_SCALER); //0 minus so that we travel DOWN to absolute positions, relative to 0
+	g_resin_height = (0-(int32_t)analog_result*ANALOG_SCALER);
+	g_layer_float = g_resin_height;
+  g_Stepper.moveTo(g_resin_height); //0 minus so that we travel DOWN to absolute positions, relative to 0
   g_Stepper.waitForMove();
-	delay(100);
+	delay(1);
 }
 

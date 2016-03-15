@@ -3,28 +3,28 @@
 
 #include "PeachyDefines.h"
 
-//Quick Examples for steps -> seconds
+//Quick Examples for steps -> milliseconds
 //TICK_TIME is defined in the PeachyDefines.h
 #define TICK_1000MS 1/TICK_TIME
 #define TICK_100MS	0.1/TICK_TIME
 #define TICK_10MS		0.01/TICK_TIME
 #define TICK_1MS		0.001/TICK_TIME
 
-#define DRIP_TIME					 1.5 * TICK_100MS //100ms minimum dead time between drips by design
-#define BUTTON_TIME				 5 * TICK_10MS
-#define ANALOG_TIME				 5 * TICK_10MS
-#define LIMIT_SWITCH_TIME  5 * TICK_10MS
+#define DRIP_TIME					 (uint16_t)(1.5 * TICK_100MS) //100ms minimum dead time between drips by design
+#define BUTTON_TIME				 (uint16_t)(4 * TICK_10MS)
+#define ANALOG_TIME				 (uint16_t)(6 * TICK_10MS)
+#define LIMIT_SWITCH_TIME  (uint16_t)(5 * TICK_10MS)
 
-uint8_t g_1000ms_flag = g_Flagger.registerFlag(TICK_1000MS);
-uint8_t g_drip_flag = g_Flagger.registerFlag(DRIP_TIME);
-uint8_t g_buttons_flag = g_Flagger.registerFlag(BUTTON_TIME);
-uint8_t g_analog_flag = g_Flagger.registerFlag(ANALOG_TIME);
+uint8_t g_1000ms_flag				= g_Flagger.registerFlag(TICK_1000MS);
+uint8_t g_drip_flag					= g_Flagger.registerFlag(DRIP_TIME);
+uint8_t g_buttons_flag			= g_Flagger.registerFlag(BUTTON_TIME);
+uint8_t g_analog_flag				= g_Flagger.registerFlag(ANALOG_TIME);
 uint8_t g_limit_switch_flag = g_Flagger.registerFlag(LIMIT_SWITCH_TIME);
 
 //globals
 uint8_t g_drips_requested=0;
 uint8_t g_system_state=STATE_NORMAL;
-int32_t g_print_height=0;
+int32_t g_resin_height=0;
 
 //This happens once a second
 void oneSecondHandler(){
@@ -82,10 +82,15 @@ void buttonHandler(){
 }
 
 void dripHandler(){
+	uint8_t drip = false;
 
 	if (g_Flagger.getFlag(g_drip_flag)){
+		//manual dripping, set drip counts
 		if (g_drips_requested > 0){
 			g_drips_requested--;
+			drip=true;
+			}
+		if ((drip) | (g_dripper_state == ON)){
 			for (uint8_t i=0; i<DRIP_TOGGLES; i++){
 				digitalWrite(DRIP_PIN,1);
 				delay(1);

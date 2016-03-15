@@ -19,6 +19,7 @@ class PeachyFlagger
 			for (int i=0; i<MAX_NUM_FLAGS; i++){
 				m_flags[i].trig_count=0;	
 				m_flags[i].flag_state=0;	
+				m_flags[i].current_count=0;
 				m_flags[i].enabled=0;	
 			}
 		m_num_flags=0;
@@ -32,6 +33,12 @@ class PeachyFlagger
 			m_flags[m_num_flags].enabled=1;	
 			m_num_flags++;
 			return flag_id;
+		}
+
+		void updateTrigCount(uint8_t id, uint16_t new_trig_count){
+			m_flags[id].flag_state=0;
+			m_flags[id].current_count=0;
+			m_flags[id].trig_count=new_trig_count;
 		}
 
 		void clearFlag(uint8_t id){
