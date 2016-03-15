@@ -22,7 +22,7 @@
 
 uint8_t g_1000ms_flag = g_Flagger.registerFlag(5000);
 uint8_t g_drip_flag = g_Flagger.registerFlag(1000);
-uint8_t g_buttons_flag = g_Flagger.registerFlag(2000);
+uint8_t g_buttons_flag = g_Flagger.registerFlag(300);
 uint8_t g_analog_flag = g_Flagger.registerFlag(2000);
 
 uint8_t g_drips_requested=0;
@@ -102,8 +102,10 @@ void analogHeightHandler(){
     findUpperLimit(); //blocking
     while(g_system_state==STATE_ANALOG){
       goToNewStartHeight();
-      while (digitalRead(HEIGHT_BUTTON_PIN)==0)
+      while (digitalRead(HEIGHT_BUTTON_PIN)==0){
         g_system_state=STATE_NORMAL;
+        findUpperLimit();
+      }
     }
   }
 }

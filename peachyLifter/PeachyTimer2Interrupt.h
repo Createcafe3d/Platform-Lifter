@@ -11,7 +11,7 @@
 
 #define CPU_FREQ 16e6 //MHz
 #define TICK_TIME 200e-6 //seconds
-#define TIM2_PRESCALER 32 //Dependant on the setupTIM2_ISR() function
+#define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER)
 
 uint16_t g_interrupt_count=0;
