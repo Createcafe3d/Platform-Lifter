@@ -10,7 +10,7 @@
 // WARNING: that number must be between 0-255
 
 #define CPU_FREQ 16e6 //MHz
-#define TICK_TIME 200e-6 //seconds
+#define TICK_TIME 500e-6 //seconds
 #define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER) //Must be less than 256
 
@@ -18,7 +18,7 @@ uint16_t g_interrupt_count=0;
 PeachyFlagger g_Flagger;
 
 //0 -> Full strenght holding torque. 3-> 1/4 holding torque. 4-> coils off when not moving
-PeachyStepper g_Stepper(4); //holding torque strength as number of "off" microsteps (out of total micro steps)
+PeachyStepper g_Stepper(0); //holding torque strength as number of "off" microsteps (out of total micro steps)
 
 void setupTIM2_ISR(){
 	//Register definitions found Page ~157 in datasheet
@@ -26,12 +26,12 @@ void setupTIM2_ISR(){
   //TCCR2A  //Timer Output comare register for setting interrupt values in non-roll over mode (not used)
   //TCCR2B  //Timer Control Register (Prescaler here)
 	//TIMSK2  //Timer Interrupt Mask Register
-  //ASSR    //Asynchronous Status Register, gives timer clock source
+	//CLKPR		//Clock initialization Register
 
   //Make the chip run at 16MHz like it should be -_- thanks arduino
   CLKPR = 0; //Clock Prescaller OFF and set to 1:1 clock speed
-  CLKPR |= 1 << CLKPCE;
-  CLKPR = 0; //zero the CLKPCE register to force a reset of clk sources
+  CLKPR |= 1 << CLKPCE; //Start the Change by setting a 1 in CLKPCE
+  CLKPR = 0; //zero the CLKPCE register to force a reset of clk sources (upgraaade!)
 
   //Timer2 Prescaler is set as follows [CS22, CS21, CS20]:
   // 000 - Stopped
@@ -49,6 +49,7 @@ void setupTIM2_ISR(){
   TCNT2=TIM2_START; //Preload it to the correct time for consistent roll overs
 }
 
+//This function gets called every TICK_TIME
 ISR(TIMER2_OVF_vect){
   TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
   g_interrupt_count++;

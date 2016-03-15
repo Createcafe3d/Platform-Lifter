@@ -39,6 +39,7 @@ void loop()
   uint16_t tmp_count;
   uint8_t stepper_direction;
   
+	g_Stepper.setSpeed(1);
   if (g_interrupt_count>5000){
     tmp_count=g_interrupt_count;
     Serial.print("Interrupt Count=");
@@ -96,5 +97,6 @@ void goToNewStartHeight()
   Serial.println(analog_result);
   g_Stepper.moveTo(0-(int16_t)analog_result*ANALOG_SCALER); //0 minus so that we travel DOWN to absolute positions, relative to 0
   g_Stepper.waitForMove();
+	delay(100);
 }
 

@@ -38,6 +38,12 @@ class PeachyStepper
 			m_hold_torque = hold_torque; 
 			m_step_state = 7;//[00000111]
 			m_microstep_counter = 0;
+			m_speed=1; //Max Speed 2->half 3->third
+			m_speed_counter=0;
+		}
+
+		void setSpeed(uint8_t speed){
+			m_speed=speed;
 		}
 
 		void moveTo(int32_t position){
@@ -76,16 +82,20 @@ class PeachyStepper
 				m_direction=STEPPER_STABLE;
 			}
 			else {
-				if (m_current_position < m_commanded_position){
-					m_direction = STEPPER_UP;
-					m_current_position++;
+				m_speed_counter++; //never zero by design
+				if (m_speed_counter>=m_speed){ //Allows for 1/2, 1/3, 1/4 speeds ...etc...
+					m_speed_counter=0;
+					if (m_current_position < m_commanded_position){
+						m_direction = STEPPER_UP;
+						m_current_position++;
+					}
+					else{ // <
+						m_direction = STEPPER_DOWN;
+						m_current_position--;
+					}
+					shift_step();
+					assign_bits();
 				}
-				else{ // <
-					m_direction = STEPPER_DOWN;
-					m_current_position--;
-				}
-				shift_step();
-				assign_bits();
 			}
 		}
 
@@ -145,6 +155,8 @@ class PeachyStepper
 		uint8_t m_hold_torque;
 		uint8_t m_step_state;
 		uint8_t m_microstep_counter;
+		uint8_t m_speed;
+		uint8_t m_speed_counter;
 		int32_t m_commanded_position;
 		int32_t m_current_position;
 

@@ -4,7 +4,7 @@
 #define DRIP_PIN A4
 #define RESET_BUTTON_PIN 11
 #define HEIGHT_BUTTON_PIN 10
-#define HEIGHT_ANALOG_PIN A3
+#define HEIGHT_ANALOG_PIN A0
 
 #define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
 #define LIMIT_SWITCH_BUFFER_STEPS 500
