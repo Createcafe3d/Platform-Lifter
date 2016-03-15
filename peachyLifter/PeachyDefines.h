@@ -36,3 +36,8 @@
 //Flag Tick time == 200us (200e-6)
 // 5000 ticks == 1 second
 // 500 ticks == 100ms
+
+//Number of Bytes to buffer before calling serialEvent();
+#define SERIAL_NUMBYTES_TRIGGER 1
+#define SERIAL_BAUD 115200
+

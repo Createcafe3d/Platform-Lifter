@@ -40,6 +40,7 @@ void oneSecondHandler(){
 	}
 }
 
+//Hard stop on the way up Limit switch
 void limitSwitchHandler(){
 	if (g_Flagger.getFlag(g_limit_switch_flag)){
 		if (!digitalRead(LIMIT_PIN)){ //active low
@@ -51,12 +52,12 @@ void limitSwitchHandler(){
 				g_Stepper.stop();
 				findUpperLimit();
 			}
-
 			g_Flagger.clearFlag(g_limit_switch_flag);
 		}
 	}
 }
 
+//Both Buttons, reset and initialize analog
 void buttonHandler(){
 	if (g_Flagger.getFlag(g_buttons_flag)){
 		if (g_system_state == STATE_NORMAL){
@@ -73,6 +74,7 @@ void buttonHandler(){
 			if (digitalRead(RESET_BUTTON_PIN) == 0){
 				findUpperLimit();
 				digitalWrite(LED_RED_PIN,0);
+				g_system_state = STATE_NORMAL;
 			}
 		}
 		g_Flagger.clearFlag(g_buttons_flag);

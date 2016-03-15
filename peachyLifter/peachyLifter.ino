@@ -11,6 +11,7 @@ void printSetups();
 //g_Flagger and g_Stepper are found in PeachyTimer2Interrupt.h
 #include "PeachyTimer2Interrupt.h"
 #include "FlaggerHandler.h"
+#include "serialHandler.h"
 
 void setup()
 {
@@ -26,7 +27,12 @@ void setup()
   printSetups();
   interrupts();
   
-  Serial.begin(115200);
+  Serial.begin(SERIAL_BAUD);
+
+	//Serial.buffer doesn't seem to exist in 1.6.8 version of arduino library
+	// ... thanks arduino
+	//Serial.buffer(SERIAL_NUMBYTES_TRIGGER); //Buffer N bytes before calling serialEvent()
+
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
 }
@@ -36,6 +42,7 @@ void loop()
   uint16_t tmp_count;
   uint8_t stepper_direction;
   
+	//debug function:
   if (g_interrupt_count>5000){
     tmp_count=g_interrupt_count;
     Serial.print("Interrupt Count=");
@@ -59,6 +66,7 @@ void findUpperLimit(){
   uint8_t stepper_direction;
   
   while(digitalRead(LIMIT_PIN)){
+		serialEvent();
     if (g_Stepper.getDirection() == STEPPER_STABLE){
       g_Stepper.move(STEPPER_UP);
     }
