@@ -12,7 +12,7 @@
 #define TICK_10MS		0.01/TICK_TIME
 #define TICK_1MS		0.001/TICK_TIME
 
-#define DRIP_TIME					 (uint16_t)(1.5 * TICK_100MS) //100ms minimum dead time between drips by design
+#define DRIP_TIME					 (uint16_t)(2 * TICK_100MS) //100ms minimum dead time between drips by design
 #define BUTTON_TIME				 (uint16_t)(4 * TICK_10MS)
 #define ANALOG_TIME				 (uint16_t)(6 * TICK_10MS)
 #define LIMIT_SWITCH_TIME  (uint16_t)(5 * TICK_10MS)
@@ -38,7 +38,7 @@ void oneSecondHandler(){
 		move_direction=digitalRead(LED_BLUE_PIN);
 		//g_Stepper.move(move_direction,500);
 		digitalWrite(LED_BLUE_PIN, move_direction ^ 1); //Toggle LED
-		g_drips_requested = 3;
+		//g_drips_requested = 1;
 	}
 }
 
@@ -95,8 +95,9 @@ void dripHandler(){
 		if ((drip) | (g_dripper_state == ON)){
 			for (uint8_t i=0; i<DRIP_TOGGLES; i++){
 				digitalWrite(DRIP_PIN,1);
-				delay(1);
+				delayMicroseconds(100);
 				digitalWrite(DRIP_PIN,0);
+				delayMicroseconds(100);
 			}
 			g_Flagger.clearFlag(g_drip_flag);
 		}

@@ -9,7 +9,7 @@
 #define HEIGHT_BUTTON_PIN 10
 #define HEIGHT_ANALOG_PIN A0
 
-#define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
+#define DRIP_TOGGLES 20 //Number of half cycles (on-off is 2 half cycles)
 
 #define LIMIT_SWITCH_BUFFER_STEPS 500 //Move after hitting limit switch
 
@@ -37,7 +37,7 @@
 // 5000 ticks == 1 second
 // 500 ticks == 100ms
 
-#define SERIAL_BAUD 115200
+#define SERIAL_BAUD 9600
 
 #define MICROMETERS_PER_LAYER 200 //my best guess - Will
 #define MICROMETERS_PER_STEP  (25.4 / 2) //two microsteps per 1 thou (inch) - Rylan

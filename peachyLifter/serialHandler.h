@@ -28,6 +28,10 @@ void nextLayer(){
 	g_Stepper.moveTo((int32_t)g_layer_float);
 }
 
+void sendHello(){
+	Serial.write("OK\n");
+}
+
 // This gets called if there are SERIAL_NUMBYTES_TRIGGER characters in the buffer
 // ... or it would if the arduino documentation was accurate
 void serialEvent(){
@@ -35,7 +39,7 @@ void serialEvent(){
 
 	while (Serial.available()){
 		serial_data=Serial.read();
-		Serial.write(serial_data); //write is faster than print, if the data is already a char
+		//Serial.write(serial_data); //write is faster than print, if the data is already a char
 		switch(serial_data){
 			case '7':
 				//DRIP ON
@@ -52,10 +56,14 @@ void serialEvent(){
 			case 'E':
 				//LAYER ENDED
 				serialLayer(OFF);
-				break;
+				//break;
 			case 'H':
 				//NEXT LAYER
 				nextLayer();
+				break;
+			case 'D':
+				//she wants the D
+				sendHello();
 				break;
 			case 'Z':
 				serialPrintDone();
@@ -63,7 +71,7 @@ void serialEvent(){
 				break;
 		}
 	}
-	Serial.write('\n'); //Newline to show what we all got in one function call
+	//Serial.write('\n'); //Newline to show what we all got in one function call
 }
 
 #endif
