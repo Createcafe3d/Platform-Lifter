@@ -19,6 +19,8 @@
 #define STEPPER_UP 1
 #define STEPPER_DOWN 0
 
+#define STEPPER_BOUNCEBACK 20
+
 #define MASK_TOPBIT 0b10000000
 #define MASK_BOTBIT 0b00000001
 
@@ -48,7 +50,7 @@ class PeachyStepper
 
 		void moveTo(int32_t position){
 			m_commanded_position=position;
-      //setDirection();
+      setDirection();
 		}
    
 		void move(uint8_t direction,uint32_t steps){
@@ -57,7 +59,16 @@ class PeachyStepper
 				m_commanded_position-=steps;
 			else if (direction == STEPPER_UP)
 				m_commanded_position+=steps;
-      //setDirection();
+      setDirection();
+		}
+
+		void move(uint8_t direction){
+			//direction 0 or 1 depending on the wiring
+			if (direction == STEPPER_DOWN)
+				m_commanded_position--;
+			else if (direction == STEPPER_UP)
+				m_commanded_position++;
+      setDirection();
 		}
 
     void waitForMove(){
@@ -67,15 +78,6 @@ class PeachyStepper
         stepper_direction = getDirection();
       } 
     }
-
-		void move(uint8_t direction){
-			//direction 0 or 1 depending on the wiring
-			if (direction == STEPPER_DOWN)
-				m_commanded_position--;
-			else if (direction == STEPPER_UP)
-				m_commanded_position++;
-      //setDirection();
-		}
 
 		void step(){
 			if (m_current_position == m_commanded_position){

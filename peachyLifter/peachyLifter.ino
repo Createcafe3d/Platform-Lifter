@@ -10,8 +10,8 @@ void printSetups();
 //Setup Files:
 //g_Flagger and g_Stepper are found in PeachyTimer2Interrupt.h
 #include "PeachyTimer2Interrupt.h"
-#include "FlaggerHandler.h"
 #include "serialHandler.h"
+#include "FlaggerHandler.h"
 
 void setup()
 {
@@ -28,10 +28,6 @@ void setup()
   interrupts();
   
   Serial.begin(SERIAL_BAUD);
-
-	//Serial.buffer doesn't seem to exist in 1.6.8 version of arduino library
-	// ... thanks arduino
-	//Serial.buffer(SERIAL_NUMBYTES_TRIGGER); //Buffer N bytes before calling serialEvent()
 
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
@@ -94,6 +90,6 @@ void goToNewStartHeight()
 	g_layer_float = g_resin_height;
   g_Stepper.moveTo(g_resin_height); //0 minus so that we travel DOWN to absolute positions, relative to 0
   g_Stepper.waitForMove();
-	delay(1);
+	delay(10);
 }
 

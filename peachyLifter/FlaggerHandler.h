@@ -3,6 +3,8 @@
 
 #include "PeachyDefines.h"
 
+#define STEPPER_LIMIT_BOUNCEBACK 20
+
 //Quick Examples for steps -> milliseconds
 //TICK_TIME is defined in the PeachyDefines.h
 #define TICK_1000MS 1/TICK_TIME
@@ -46,7 +48,7 @@ void limitSwitchHandler(){
 		if (!digitalRead(LIMIT_PIN)){ //active low
 			digitalWrite(LED_RED_PIN,1);
 			g_Stepper.stop();
-			g_Stepper.move(STEPPER_DOWN,20);
+			g_Stepper.move(STEPPER_DOWN,STEPPER_LIMIT_BOUNCEBACK);
 			g_system_state=STATE_LIMITED;
 			if (digitalRead(RESET_BUTTON_PIN) == 0){
 				g_Stepper.stop();
