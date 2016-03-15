@@ -10,8 +10,9 @@
 #define RESET_BUTTON_PIN 11
 #define HEIGHT_BUTTON_PIN 10
 #define HEIGHT_ANALOG_PIN A3
+#define LIMIT_SWITCH_BUFFER_STEPS 500
 
-#define ANALOG_SCALER 10 //How much to multiply up the Analog reading by. Analog values range from 0->1023
+#define ANALOG_SCALER 3 //How much to multiply up the Analog reading by. Analog values range from 0->1023
 #define STATE_ANALOG 1
 #define STATE_NORMAL 0
 
@@ -68,9 +69,10 @@ void findUpperLimit(){
     }
   }
     
-  g_Stepper.move(STEPPER_DOWN,500);
+  g_Stepper.move(STEPPER_DOWN,LIMIT_SWITCH_BUFFER_STEPS);
   g_Stepper.waitForMove();
   g_Stepper.zeroPosition();
+  goToNewStartHeight();
 }
 
 void printSetups(){
@@ -96,21 +98,29 @@ void dripHandler(){
 }
 
 void analogHeightHandler(){
-  uint16_t analog_result;
-  
   if (g_system_state==STATE_ANALOG){
     findUpperLimit(); //blocking
-    
     while(g_system_state==STATE_ANALOG){
-      analog_result = analogRead(HEIGHT_ANALOG_PIN);
-      Serial.println(analog_result);
-      g_Stepper.moveTo(0-(int16_t)analog_result*ANALOG_SCALER); //0 minus so that we travel DOWN to absolute positions, relative to 0
-      g_Stepper.waitForMove();
+      goToNewStartHeight();
       while (digitalRead(HEIGHT_BUTTON_PIN)==0)
         g_system_state=STATE_NORMAL;
     }
   }
 }
+
+void goToNewStartHeight()
+{
+  uint16_t analog_result;
+  analog_result = analogRead(HEIGHT_ANALOG_PIN);
+  Serial.println(analog_result);
+  g_Stepper.moveTo(0-(int16_t)analog_result*ANALOG_SCALER); //0 minus so that we travel DOWN to absolute positions, relative to 0
+  g_Stepper.waitForMove();
+}
+  
+
+
+
+
 
 void loop()
 {
@@ -129,15 +139,15 @@ void loop()
   buttonHandler();
   analogHeightHandler();
 
-	//This happens once a second
-	if (g_Flagger.getFlag(g_1000ms_flag)){
-    Serial.println("ONE SECOND");
-    g_Flagger.clearFlag(g_1000ms_flag);
-    move_direction=digitalRead(LED_PIN);
-    g_Stepper.move(move_direction,100);
-		digitalWrite(LED_PIN, move_direction ^ 1); //Toggle LED
-    g_drips_requested = 3;
-	}
+//	//This happens once a second
+//	if (g_Flagger.getFlag(g_1000ms_flag)){
+//    Serial.println("ONE SECOND");
+//    g_Flagger.clearFlag(g_1000ms_flag);
+//    move_direction=digitalRead(LED_PIN);
+//    g_Stepper.move(move_direction,100);
+//		digitalWrite(LED_PIN, move_direction ^ 1); //Toggle LED
+//    g_drips_requested = 3;
+//	}
  
 }
 
