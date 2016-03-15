@@ -3,6 +3,7 @@
 #ifdef _TEST_PEACHYSTEPPER
 
 void digitalWrite(unsigned char,unsigned char){} //Stub it out for testing
+void delayMicroseconds(int){} //Stub out arduino delay
 
 #include "PeachyStepper.h"
 
@@ -89,7 +90,7 @@ void test_ustepping(PeachyStepper *Stepper){
 
 	Stepper->move(STEPPER_UP,4);
 	for (int i=0; i<18; i++){
-		Stepper->micro_step();
+		Stepper->microStep();
 		print_status(Stepper);
 		print_positions(Stepper);
 	}
