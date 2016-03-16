@@ -11,5 +11,6 @@
 void setupTIM2_ISR();
 void serialCheckStarved();
 
+extern PeachyStepper g_Stepper;
 
 #endif

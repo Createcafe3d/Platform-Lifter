@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include <stdint.h>
 
 #include "PeachyDefines.h"
 #include "PeachyMain.h"
@@ -8,18 +9,18 @@
 #include "SerialHandler.h"
 #include "FlaggerHandler.h"
 #include "PeachyPrintState.h"
-#include <stdint.h>
 
 //externs
 extern PeachyFlagger g_Flagger;
 extern PeachyStepper g_Stepper;
+
 extern uint16_t g_interrupt_count;
 extern uint16_t g_Serial_starved_count;
 extern uint8_t g_Serial_starved;
 extern int32_t g_resin_height;
 extern double g_layer_float;
 
-PeachyPrintState g_PrintState();
+PeachyPrintState g_PrintState;
 
 void setup()
 {

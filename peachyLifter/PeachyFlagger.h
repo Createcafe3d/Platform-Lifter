@@ -13,24 +13,24 @@ struct Flag_info{
 
 class PeachyFlagger
 {
-	public:
-		PeachyFlagger();
+public:
+	PeachyFlagger();
 
-		uint8_t registerFlag(uint16_t trig_count);
-		void updateTrigCount(uint8_t id, uint16_t new_trig_count);
-		void clearFlag(uint8_t id);
+	uint8_t registerFlag(uint16_t trig_count);
+	void updateTrigCount(uint8_t id, uint16_t new_trig_count);
+	void clearFlag(uint8_t id);
 
-		void decrimentFlag(uint8_t id);
-		void tick();
+	void decrimentFlag(uint8_t id);
+	void tick();
 
-		void enable(uint8_t id);
-		void disable(uint8_t id);
+	void enable(uint8_t id);
+	void disable(uint8_t id);
 
-		uint8_t getFlag(uint8_t id){ return m_flags[id].flag_state; }
+	uint8_t getFlag(uint8_t id){ return m_flags[id].flag_state; }
 
-	private:
-		Flag_info m_flags[MAX_NUM_FLAGS];
-		uint8_t m_num_flags;
+private:
+	Flag_info m_flags[MAX_NUM_FLAGS];
+	uint8_t m_num_flags;
 };
 
 #endif

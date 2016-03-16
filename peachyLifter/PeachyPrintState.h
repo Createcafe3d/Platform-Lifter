@@ -10,16 +10,16 @@
 
 #define NUMBER_PRINT_STATES 5
 
-#define CAMERA_PIN AN5
+#define CAMERA_PIN A5
 
-#define PICTURE_QUICK_TIME = 0.2 //seconds
-#define PICTURE_QUICK_TICKS = PICTURE_QUICK_TIME/TICK_TIME
+#define PICTURE_QUICK_TIME  0.2 //seconds
+#define PICTURE_QUICK_TICKS PICTURE_QUICK_TIME/TICK_TIME
 
-#define PICTURE_LONG_TIME = 10 //seconds
-#define PICTURE_LONG_TICKS = PICTURE_LONG_TIME/TICK_TIME
-
+#define PICTURE_LONG_TIME  10 //seconds
+#define PICTURE_LONG_TICKS PICTURE_LONG_TIME/TICK_TIME
 
 #include <stdint.h>
+#include "PeachyDefines.h"
 #include "PeachyTimer2Setup.h"
 #include "FlaggerHandler.h" //for the defines
 
@@ -32,7 +32,7 @@ struct PeachyStates{
 	uint8_t photoBeforeDelay = false;
 	uint8_t photoAfterDelay = false;
 	uint8_t photoDuringDelay = false;
-}
+};
 
 class PeachyPrintState
 {
@@ -76,7 +76,7 @@ class PeachyPrintState
 
 		void pictureHandler(){
 			//Figure out when to turn it off
-			if g_Flagger.getFlag(m_flagger_id_picture){
+			if (g_Flagger.getFlag(m_flagger_id_picture)){
 				digitalWrite(CAMERA_PIN,0);
 				g_Flagger.disable(m_flagger_id_picture);
 				g_Flagger.clearFlag(m_flagger_id_picture);
@@ -86,10 +86,10 @@ class PeachyPrintState
 		void handlePrintState(){
 			pictureHandler(); //Handle the camera triggering OFF
 
-			if g_Flagger.getFlag(m_flagger_id_state){
+			if (g_Flagger.getFlag(m_flagger_id_state)){
 				//Just finished the delay cycle
 				if (m_printStates[m_printState].photoAfterDelay){
-					takeAfterPicture();
+					takePicture();
 				}
 				printStateMachineNext();//Now that we are done and took a picture (maybe), go to next state
 				m_delay=true;//Do the delay action on next handle call
@@ -97,51 +97,53 @@ class PeachyPrintState
 			}
 
 			//ready to start a new delay cycle, do we need to start a new delay?
-			else if (m_printState == PRINT_STATE_PRINTING){
-				//special case to wait for the layer to be done
+			else {
+				if (m_printState == PRINT_STATE_PRINTING){
+					//special case to wait for the layer to be done
+					uint8_t i=0;
 				}
-				else (m_delay & (g_Stepper.getDirection()==STEPPER_STABLE)){
+				else if (m_delay & (g_Stepper.getDirection() == STEPPER_STABLE)){
 					if (m_printStates[m_printState].photoBeforeDelay){
 						takePicture();
 					}
 					if (m_printStates[m_printState].photoDuringDelay){
 						takeDuringPicture();
 					}
-					g_Flagger.updateTrigCount(m_flagger_id_state,m_printStates[delay_ticks]);
+					g_Flagger.updateTrigCount(m_flagger_id_state, m_printStates[m_printState].delay_ticks);
 					m_delay=false;
 				}
 			}
 		}
 
-	//Steps to print:
-	//1) DRAWING: draw a layer
-	//2) Raise print all the way up - Pictures
-	//3) Totally submerge print - Pictures
-	//4) Bring print to printing height + Margin1 (This is to drain off resin that is globbed on top) - Pictures
-	//5) Bring print to printing height - Margin2 (This is to allow the surface tension to flow back over) - Pictures
-	//6) Bring print to printing height (This is to allow the surface tension to flow back over) - Pictures (timelapse mode optional)
-	//
-	//Print -> Resurrect -> Submerge -> Lift -> Flow -> Print
-	
+		//Steps to print:
+		//1) DRAWING: draw a layer
+		//2) Raise print all the way up - Pictures
+		//3) Totally submerge print - Pictures
+		//4) Bring print to printing height + Margin1 (This is to drain off resin that is globbed on top) - Pictures
+		//5) Bring print to printing height - Margin2 (This is to allow the surface tension to flow back over) - Pictures
+		//6) Bring print to printing height (This is to allow the surface tension to flow back over) - Pictures (timelapse mode optional)
+		//
+		//Print -> Resurrect -> Submerge -> Lift -> Flow -> Print
+
 	private:
 
 		void printStateMachineNext(){
 			//call when done current state
 			switch(m_printState){
-				case PRINTSTATE_PRINTING:
-					m_printState=PRINTSTATE_RESURRECTING;
+				case PRINT_STATE_PRINTING:
+					m_printState=PRINT_STATE_RESURRECTING;
 					break;
-				case PRINTSTATE_RESURRECTING:
-					m_printState=PRINTSTATE_SUBMERGING;
+				case PRINT_STATE_RESURRECTING:
+					m_printState=PRINT_STATE_SUBMERGING;
 					break;
-				case PRINTSTATE_SUBMERGING:
-					m_printState=PRINTSTATE_LIFTING;
+				case PRINT_STATE_SUBMERGING:
+					m_printState=PRINT_STATE_LIFTING;
 					break;
-				case PRINTSTATE_LIFTING:
-					m_printState=PRINTSTATE_FLOWING;
+				case PRINT_STATE_LIFTING:
+					m_printState=PRINT_STATE_FLOWING;
 					break;
-				case PRINTSTATE_FLOWING:
-					m_printState=PRINTSTATE_PRINTING;
+				case PRINT_STATE_FLOWING:
+					m_printState=PRINT_STATE_PRINTING;
 					break;
 			}
 			g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps);//Start the move to that height
@@ -157,5 +159,5 @@ class PeachyPrintState
 		uint16_t m_layerHeight_steps;
 
 		PeachyStates m_printStates[NUMBER_PRINT_STATES];
-
+};
 #endif

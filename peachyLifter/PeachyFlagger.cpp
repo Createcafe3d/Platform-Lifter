@@ -8,7 +8,7 @@ PeachyFlagger::PeachyFlagger(){
 		m_flags[i].enabled=0;	
 	}
 	m_num_flags=0;
-};
+}
 
 uint8_t PeachyFlagger::registerFlag(uint16_t trig_count){
 	uint8_t flag_id=m_num_flags;

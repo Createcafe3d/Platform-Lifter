@@ -1,8 +1,10 @@
 #include "FlaggerHandler.h"
+#include "PeachyTimer2Setup.h"
 
 //externals
 extern PeachyFlagger g_Flagger;
 extern PeachyStepper g_Stepper;
+
 extern uint8_t g_dripper_state;
 
 //Globals
