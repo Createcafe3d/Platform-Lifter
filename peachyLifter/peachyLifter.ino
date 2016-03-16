@@ -7,6 +7,7 @@
 #include "PeachyTimer2Setup.h"
 #include "SerialHandler.h"
 #include "FlaggerHandler.h"
+#include "PeachyPrintState.h"
 #include <stdint.h>
 
 //externs
@@ -17,6 +18,8 @@ extern uint16_t g_Serial_starved_count;
 extern uint8_t g_Serial_starved;
 extern int32_t g_resin_height;
 extern double g_layer_float;
+
+PeachyPrintState g_PrintState();
 
 void setup()
 {
@@ -59,6 +62,10 @@ void loop()
   buttonHandler();
   analogHeightHandler();
 	oneSecondHandler();
+
+	//Handle the print state machine
+	g_PrintState.handlePrintState();
+
 }
 
 //***********************************

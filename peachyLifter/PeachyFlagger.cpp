@@ -15,15 +15,30 @@ uint8_t PeachyFlagger::registerFlag(uint16_t trig_count){
 	m_flags[m_num_flags].trig_count=trig_count;	
 	m_flags[m_num_flags].current_count=0;	
 	m_flags[m_num_flags].flag_state=0;	
-	m_flags[m_num_flags].enabled=1;	
+	if(trig_count)
+		m_flags[m_num_flags].enabled=1;	
+	else
+		m_flags[m_num_flags].enabled=0;	
 	m_num_flags++;
 	return flag_id;
+}
+
+void PeachyFlagger::disable(uint8_t id){
+	m_flags[id].enabled=0;
+}
+
+void PeachyFlagger::enable(uint8_t id){
+	m_flags[id].enabled=1;
 }
 
 void PeachyFlagger::updateTrigCount(uint8_t id, uint16_t new_trig_count){
 	m_flags[id].flag_state=0;
 	m_flags[id].current_count=0;
 	m_flags[id].trig_count=new_trig_count;
+	if(new_trig_count)
+		m_flags[id].enabled=1;
+	else
+		m_flags[id].enabled=0;
 }
 
 void PeachyFlagger::clearFlag(uint8_t id){

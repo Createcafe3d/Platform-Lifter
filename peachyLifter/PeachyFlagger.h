@@ -23,6 +23,9 @@ class PeachyFlagger
 		void decrimentFlag(uint8_t id);
 		void tick();
 
+		void enable(uint8_t id);
+		void disable(uint8_t id);
+
 		uint8_t getFlag(uint8_t id){ return m_flags[id].flag_state; }
 
 	private:
