@@ -1,6 +1,15 @@
 #include "SerialHandler.h"
-#include "PeachyTimer2Setup.h"
 
+//externs
+extern PeachyStepper g_Stepper;
+extern uint8_t g_Serial_starved;
+extern uint16_t g_Serial_starved_count;
+extern double g_layer_float;
+
+//globals
+uint8_t g_dripper_state = OFF;
+uint8_t g_layer_state = OFF;
+double  g_layer_float = 0.0;
 
 void serialDrip(uint8_t state){
 	g_dripper_state=state;

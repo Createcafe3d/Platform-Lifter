@@ -1,17 +1,22 @@
 #include "Arduino.h"
 
 #include "PeachyDefines.h"
+#include "PeachyMain.h"
 
-//function prototypes
-void findUpperLimit();
-void goToNewStartHeight();
-void printSetups();
-
-//Setup Files:
 //g_Flagger and g_Stepper are found in PeachyTimer2Setup.h
 #include "PeachyTimer2Setup.h"
 #include "SerialHandler.h"
 #include "FlaggerHandler.h"
+#include <stdint.h>
+
+//externs
+extern PeachyFlagger g_Flagger;
+extern PeachyStepper g_Stepper;
+extern uint16_t g_interrupt_count;
+extern uint16_t g_Serial_starved_count;
+extern uint8_t g_Serial_starved;
+extern int32_t g_resin_height;
+extern double g_layer_float;
 
 void setup()
 {
@@ -57,6 +62,17 @@ void loop()
 //***********************************
 //*** Extra Functions ***************
 //***********************************
+
+//This function gets called every TICK_TIME
+ISR(TIMER2_OVF_vect){
+  TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
+  g_interrupt_count++;//my favourite debug counter
+	g_Serial_starved_count++;
+	g_Flagger.tick();
+  g_Stepper.microStep();
+	serialCheckStarved();
+  //Interrupt Flag cleared automagically
+}
 
 void findUpperLimit(){
   uint8_t stepper_direction;

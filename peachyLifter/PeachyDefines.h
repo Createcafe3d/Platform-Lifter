@@ -1,8 +1,9 @@
+#ifndef _PEACHY_DEFINES
+#define _PEACHY_DEFINES
 
 //Pin definitions:
 #define LED_RED_PIN 6
 #define LED_BLUE_PIN 7
-
 #define DRIP_PIN A4
 #define LIMIT_PIN 12
 
@@ -10,6 +11,7 @@
 #define START_BUTTON_PIN 9
 #define HEIGHT_BUTTON_PIN 10
 #define HEIGHT_ANALOG_PIN A0
+
 //The digital pins used for the stepper driver
 #define STEPPER_PIN0 2
 #define STEPPER_PIN1 3
@@ -21,8 +23,8 @@
 // ie: 3 means 0->1->2->3 (4 calls)
 #define STEPPER_U_STEPS 3 //Must be greater than 0
 
+#define MAX_NUM_FLAGS 8
 #define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
-
 #define LIMIT_SWITCH_BUFFER_STEPS 500 //Steps down after hitting limit switch
 
 //Must be an integer less than 64 Because:(10 bit a/d * ANALOG_SCALER) -> uint16
@@ -74,3 +76,7 @@
 #define MICROMETERS_PER_LAYER 200 //my best guess - Will
 #define MICROMETERS_PER_STEP  (25.4 / 2) //two microsteps per 1 thou (inch) - Rylan
 #define STEPS_PER_LAYER MICROMETERS_PER_LAYER/MICROMETERS_PER_STEP
+
+#endif
+
+

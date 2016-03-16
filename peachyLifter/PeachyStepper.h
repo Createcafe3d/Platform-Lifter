@@ -4,10 +4,13 @@
 #define _PEACHYSTEPPER_H_
 
 #include "PeachyDefines.h"
+#include <stdint.h>
 
 #ifdef _TEST_PEACHYSTEPPER
 	void digitalWrite(unsigned char,unsigned char); //Stub it out for testing
 	void delayMicroseconds(int); //Stub out arduino delay
+#else
+	#include "Arduino.h"
 #endif
 
 #define MASK_TOPBIT 0b10000000
@@ -18,8 +21,6 @@
 #define MASK_PIN2 0b00100000
 #define MASK_PIN3 0b10000000
 
-
-#include <stdint.h>
 class PeachyStepper
 {
 	public:
@@ -27,8 +28,12 @@ class PeachyStepper
 
 		void setSpeed(uint8_t speed) { m_speed=speed; }
 		void stop() { m_commanded_position=m_current_position; }
+		void moveTo(int32_t position){ m_commanded_position=position; }
+		void zeroPosition(){
+			m_current_position = 0;
+			m_commanded_position = 0;
+		}
 
-		void moveTo(int32_t position);
 		void move(uint8_t direction,uint32_t steps);
 		void move(uint8_t direction);
 
@@ -36,10 +41,6 @@ class PeachyStepper
 		void step();
 		void microStep();
 
-		void zeroPosition(){
-			m_current_position = 0;
-			m_commanded_position = 0;
-		}
 
 		int32_t getPosition(){
 			return m_current_position;
@@ -54,7 +55,6 @@ class PeachyStepper
 		}
 
 		uint8_t getDirection(){
-      delayMicroseconds(1); // I don't know why this is needed, but the loops hang without this.
 			return m_direction;
 		}
 
