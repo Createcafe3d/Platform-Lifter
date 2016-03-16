@@ -29,8 +29,10 @@ void setup()
 
 	noInterrupts();
 	setupTIM2_ISR();
-  printSetups();
   interrupts();
+
+	initialize_flags();
+  printSetups();
   
   Serial.begin(SERIAL_BAUD);
 
@@ -76,16 +78,18 @@ ISR(TIMER2_OVF_vect){
 
 void findUpperLimit(){
   uint8_t stepper_direction;
-  
+
   while(digitalRead(LIMIT_PIN)){
 		serialEvent();
     if (g_Stepper.getDirection() == STEPPER_STABLE){
       g_Stepper.move(STEPPER_UP);
     }
   }
-    
+	Serial.write("AFTER serialEvent\n");
   g_Stepper.move(STEPPER_DOWN,LIMIT_SWITCH_BUFFER_STEPS);
+	Serial.write("AFTER serialEvent move \n");
   g_Stepper.waitForMove();
+	Serial.write("AFTER serialEvent waitForMove\n");
   g_Stepper.zeroPosition();
   goToNewStartHeight();
 }
@@ -101,11 +105,8 @@ void goToNewStartHeight()
 {
   uint16_t analog_result;
   analog_result = analogRead(HEIGHT_ANALOG_PIN);
-  Serial.println(analog_result);
 	g_resin_height = (0-(int32_t)analog_result*ANALOG_SCALER);
 	g_layer_float = g_resin_height;
   g_Stepper.moveTo(g_resin_height); //0 minus so that we travel DOWN to absolute positions, relative to 0
-  g_Stepper.waitForMove();
-	delay(10);
 }
 

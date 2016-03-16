@@ -55,6 +55,7 @@ class PeachyStepper
 		}
 
 		uint8_t getDirection(){
+			setDirection();
 			return m_direction;
 		}
 

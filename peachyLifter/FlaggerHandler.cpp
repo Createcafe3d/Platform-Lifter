@@ -28,6 +28,7 @@ void initialize_flags(){
 //This happens once a second
 void oneSecondHandler(){
 	uint8_t move_direction;
+
 	if (g_Flagger.getFlag(g_1000ms_flag)){
 		g_Flagger.clearFlag(g_1000ms_flag);
 
@@ -47,36 +48,51 @@ void limitSwitchHandler(){
 			g_Stepper.stop();
 			g_Stepper.move(STEPPER_DOWN,STEPPER_LIMIT_BOUNCEBACK);
 			g_system_state=STATE_LIMITED;
-			if (digitalRead(RESET_BUTTON_PIN) == 0){
-				g_Stepper.stop();
-				findUpperLimit();
-			}
-			g_Flagger.clearFlag(g_limit_switch_flag);
 		}
 	}
+	g_Flagger.clearFlag(g_limit_switch_flag);
 }
 
 //Both Buttons, reset and initialize analog
 void buttonHandler(){
 	if (g_Flagger.getFlag(g_buttons_flag)){
+		if (digitalRead(RESET_BUTTON_PIN) == 0){
+			digitalWrite(LED_RED_PIN,0);
+			digitalWrite(LED_YELLOW_PIN,0);
+			g_Stepper.stop();
+			g_system_state=STATE_NORMAL;
+			findUpperLimit();
+		}
 		if (g_system_state == STATE_NORMAL){
-			if (digitalRead(RESET_BUTTON_PIN) == 0){
-				g_Stepper.stop();
-				findUpperLimit();
-			}
+			//NORMAL
 			if (digitalRead(HEIGHT_BUTTON_PIN) == 0){
 				g_Stepper.stop();
 				g_system_state=STATE_ANALOG;
+				digitalWrite(LED_YELLOW_PIN,1);
 			}
 		}
 		else if (g_system_state == STATE_LIMITED){
+			//LIMITED
 			if (digitalRead(RESET_BUTTON_PIN) == 0){
 				findUpperLimit();
 				digitalWrite(LED_RED_PIN,0);
 				g_system_state = STATE_NORMAL;
 			}
 		}
-		g_Flagger.clearFlag(g_buttons_flag);
+	}
+	g_Flagger.clearFlag(g_buttons_flag);
+}
+
+void analogHeightHandler(){
+	//ANALOG
+	if (g_system_state==STATE_ANALOG){
+		if (digitalRead(HEIGHT_BUTTON_PIN)==0){ //if pressed, set new height
+			goToNewStartHeight();
+		}
+		else{ //else jump out of ANALOG STATE
+			g_system_state=STATE_NORMAL;
+			digitalWrite(LED_YELLOW_PIN,0);
+		}
 	}
 }
 
@@ -101,16 +117,4 @@ void dripHandler(){
 	}
 }
 
-void analogHeightHandler(){
-	if (g_system_state==STATE_ANALOG){
-		findUpperLimit(); //blocking
-		while(g_system_state==STATE_ANALOG){
-			goToNewStartHeight();
-			while (digitalRead(HEIGHT_BUTTON_PIN)==0){
-				g_system_state=STATE_NORMAL;
-				findUpperLimit();
-			}
-		}
-	}
-}
 

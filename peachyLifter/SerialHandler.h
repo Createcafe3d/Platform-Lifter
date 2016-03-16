@@ -15,6 +15,5 @@ void nextLayer();
 void sendHello();
 void handleChar();
 void serialEvent();
-void findUpperLimit();
 
 #endif

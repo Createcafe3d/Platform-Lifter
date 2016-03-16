@@ -4,6 +4,7 @@
 //Pin definitions:
 #define LED_RED_PIN 6
 #define LED_BLUE_PIN 7
+#define LED_YELLOW_PIN 8
 #define DRIP_PIN A4
 #define LIMIT_PIN 12
 
@@ -64,7 +65,7 @@
 // 500 ticks == 100ms
 
 //Set Baud to match. Default: 9600
-#define SERIAL_BAUD					9600 //bits/s
+#define SERIAL_BAUD					115200 //bits/s
 #define SERIAL_BUFFER_BYTES 64
 #define SERIAL_BUFFER				SERIAL_BUFFER_BYTES*8 //bits
 

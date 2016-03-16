@@ -21,6 +21,8 @@
 #define ANALOG_TIME				 (uint16_t)(6 * TICK_10MS)
 #define LIMIT_SWITCH_TIME  (uint16_t)(5 * TICK_10MS)
 
+void initialize_flags();
+
 void oneSecondHandler();
 void limitSwitchHandler();
 void buttonHandler();
