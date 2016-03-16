@@ -1,6 +1,8 @@
 #ifndef _SERIAL_HANDLER
 #define _SERIAL_HANDLER
 
+#include "PeachyTimer2Interrupt.h"
+
 #define ON 1
 #define OFF 0
 
@@ -32,14 +34,11 @@ void sendHello(){
 	Serial.write("OK\n");
 }
 
-// This gets called if there are SERIAL_NUMBYTES_TRIGGER characters in the buffer
-// ... or it would if the arduino documentation was accurate
-void serialEvent(){
+void handleChar(){
 	uint8_t serial_data;
 
-	while (Serial.available()){
+	if (Serial.available()){
 		serial_data=Serial.read();
-		//Serial.write(serial_data); //write is faster than print, if the data is already a char
 		switch(serial_data){
 			case '7':
 				//DRIP ON
@@ -62,7 +61,7 @@ void serialEvent(){
 				nextLayer();
 				break;
 			case 'D':
-				//she wants the D
+				//it gave me the D .... -_-
 				sendHello();
 				break;
 			case 'Z':
@@ -71,7 +70,26 @@ void serialEvent(){
 				break;
 		}
 	}
-	//Serial.write('\n'); //Newline to show what we all got in one function call
+	else
+		g_Serial_starved_count=0;
+}
+
+// This gets called if there are SERIAL_NUMBYTES_TRIGGER characters in the buffer
+// ... or it would if the arduino documentation was accurate
+void serialEvent(){
+
+	do{
+		handleChar();
+
+		//Check for roll over before subtracting from the starve counter
+		if (g_Serial_starved_count > SERIAL_BYTE_TICKS)
+			g_Serial_starved_count -= SERIAL_BYTE_TICKS;
+		else{
+			g_Serial_starved_count=0;
+			g_Serial_starved=0; //Exit override case if timer interrupt doesn't clear this first
+		}
+	}
+	while(g_Serial_starved); // Serial_starved controlled by the timer interrupt
 }
 
 #endif

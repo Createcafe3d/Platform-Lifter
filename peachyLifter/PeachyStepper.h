@@ -3,21 +3,7 @@
 #ifndef _PEACHYSTEPPER_H_
 #define _PEACHYSTEPPER_H_
 
-//The digital pins used for the stepper driver
-#define STEPPER_PIN0 2
-#define STEPPER_PIN1 3
-#define STEPPER_PIN2 4
-#define STEPPER_PIN3 5
-
-// How many times step gets called (minus one) between actual motor steps
-// These steps include the 0th step,
-// ie: 3 means 0->1->2->3 (4 calls)
-#define STEPPER_U_STEPS 3 //Must be greater than 0
-
-//These shouldn't need to be changed
-#define STEPPER_STABLE 2
-#define STEPPER_UP 1
-#define STEPPER_DOWN 0
+#include "PeachyDefines.h"
 
 #define MASK_TOPBIT 0b10000000
 #define MASK_BOTBIT 0b00000001
@@ -157,6 +143,7 @@ class PeachyStepper
 		uint8_t m_microstep_counter;
 		uint8_t m_speed;
 		uint8_t m_speed_counter;
+		uint8_t m_force_pins;
 		int32_t m_commanded_position;
 		int32_t m_current_position;
 
@@ -215,7 +202,7 @@ class PeachyStepper
 			// [0 0 0 1] 6 
 			// [1 0 0 1] 7 
 			uint8_t tmp_bit;
-
+			
 			tmp_bit = (m_step_state & MASK_PIN0);
 			digitalWrite(STEPPER_PIN0,tmp_bit);
 

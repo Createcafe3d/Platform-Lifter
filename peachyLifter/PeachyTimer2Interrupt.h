@@ -1,20 +1,25 @@
+#ifndef _PEACHY_TIMER2_ISR
+#define _PEACHY_TIMER2_ISR
 
+	//Reference for taking control of Timer2 and fixing the Uno's clock so it actually runs at 16MHz
+	//Register definitions found Page ~157 in datasheet
+	//TCNT2   //Timer/Counter Register. The actual timer value is stored here.
+  //TCCR2B  //Timer Control Register (Prescaler here)
+	//TIMSK2  //Timer Interrupt Mask Register
+	//CLKPR		//Clock initialization Register
+	
+#include "PeachyDefines.h"
 #include "PeachyFlagger.h"
 #include "PeachyStepper.h"
 
 uint16_t g_interrupt_count=0;
+uint16_t g_Serial_starved_count=0;
+uint8_t g_Serial_starved=0;
 
-//0 -> Full strenght holding torque. 3-> 1/4 holding torque. 4-> coils off when not moving
-PeachyStepper g_Stepper(0); //holding torque strength as number of "off" microsteps (out of total micro steps)
+PeachyStepper g_Stepper(STEPPER_HOLD_TORQUE);
 PeachyFlagger g_Flagger;
 
 void setupTIM2_ISR(){
-	//Register definitions found Page ~157 in datasheet
-	//TCNT2   //Timer/Counter Register. The actual timer value is stored here.
-  //TCCR2A  //Timer Output comare register for setting interrupt values in non-roll over mode (not used)
-  //TCCR2B  //Timer Control Register (Prescaler here)
-	//TIMSK2  //Timer Interrupt Mask Register
-	//CLKPR		//Clock initialization Register
 
   //Make the chip run at 16MHz like it should be -_- thanks arduino
   CLKPR = 0; //Clock Prescaller OFF and set to 1:1 clock speed
@@ -37,11 +42,25 @@ void setupTIM2_ISR(){
   TCNT2=TIM2_START; //Preload it to the correct time for consistent roll overs
 }
 
+void serialCheckStarved(){
+	if (g_Serial_starved_count>SERIAL_STARVE_MAX){
+		g_Serial_starved=1;
+		g_Serial_starved_count++;
+	}
+	else
+		g_Serial_starved=0;
+}
+
 //This function gets called every TICK_TIME
 ISR(TIMER2_OVF_vect){
+
   TCNT2=TIM2_START; //Reset the timer to start value for consistant roll overs
-  g_interrupt_count++;
+  g_interrupt_count++;//my favourite debug counter
+	g_Serial_starved_count++;
 	g_Flagger.tick();
   g_Stepper.microStep();
-  //Flag cleared automagically
+	serialCheckStarved();
+  //Interrupt Flag cleared automagically
 }
+
+#endif
