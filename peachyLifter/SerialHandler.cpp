@@ -1,14 +1,6 @@
-#ifndef _SERIAL_HANDLER
-#define _SERIAL_HANDLER
+#include "SerialHandler.h"
+#include "PeachyTimer2Setup.h"
 
-#include "PeachyTimer2Interrupt.h"
-
-#define ON 1
-#define OFF 0
-
-uint8_t g_dripper_state = OFF;
-uint8_t g_layer_state = OFF;
-double  g_layer_float = 0.0;
 
 void serialDrip(uint8_t state){
 	g_dripper_state=state;
@@ -91,5 +83,3 @@ void serialEvent(){
 	}
 	while(g_Serial_starved); // Serial_starved controlled by the timer interrupt
 }
-
-#endif

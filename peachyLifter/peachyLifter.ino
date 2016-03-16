@@ -8,9 +8,9 @@ void goToNewStartHeight();
 void printSetups();
 
 //Setup Files:
-//g_Flagger and g_Stepper are found in PeachyTimer2Interrupt.h
-#include "PeachyTimer2Interrupt.h"
-#include "serialHandler.h"
+//g_Flagger and g_Stepper are found in PeachyTimer2Setup.h
+#include "PeachyTimer2Setup.h"
+#include "SerialHandler.h"
 #include "FlaggerHandler.h"
 
 void setup()
