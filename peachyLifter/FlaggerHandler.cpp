@@ -4,6 +4,7 @@
 //externals
 extern PeachyFlagger g_Flagger;
 extern PeachyStepper g_Stepper;
+extern PeachyPrintState g_PrintState;
 
 extern uint8_t g_dripper_state;
 
@@ -25,20 +26,18 @@ void initialize_flags(){
 	g_buttons_flag			= g_Flagger.registerFlag(BUTTON_TIME);
 	g_analog_flag				= g_Flagger.registerFlag(ANALOG_TIME);
 	g_limit_switch_flag = g_Flagger.registerFlag(LIMIT_SWITCH_TIME);
+	g_PrintState.initializeFlags();
+
 }
 
 //This happens once a second
 void oneSecondHandler(){
-	uint8_t move_direction;
-
+	static uint8_t move_direction=0;
 	if (g_Flagger.getFlag(g_1000ms_flag)){
+		Serial.write("Switching BLUE\n");
+		digitalWrite(LED_BLUE_PIN, move_direction); //Toggle LED
+		move_direction = !move_direction;
 		g_Flagger.clearFlag(g_1000ms_flag);
-
-		Serial.println("ONE SECOND");
-		move_direction=digitalRead(LED_BLUE_PIN);
-		//g_Stepper.move(move_direction,500);
-		digitalWrite(LED_BLUE_PIN, move_direction ^ 1); //Toggle LED
-		//g_drips_requested = 1;
 	}
 }
 

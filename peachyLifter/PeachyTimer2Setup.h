@@ -4,6 +4,7 @@
 #include "PeachyDefines.h"
 #include "PeachyFlagger.h"
 #include "PeachyStepper.h"
+#include "PeachyPrintState.h"
 #include "Arduino.h"
 #include <stdint.h>
 
@@ -11,6 +12,6 @@
 void setupTIM2_ISR();
 void serialCheckStarved();
 
-extern PeachyStepper g_Stepper;
+//In your main function, you need to include the ISR(TIMER2_OVF_vect){} function
 
 #endif

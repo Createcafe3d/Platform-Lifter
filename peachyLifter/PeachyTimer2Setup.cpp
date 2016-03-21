@@ -12,7 +12,7 @@ uint8_t g_Serial_starved=0;
 
 PeachyStepper g_Stepper(STEPPER_HOLD_TORQUE);
 PeachyFlagger g_Flagger;
-
+PeachyPrintState g_PrintState;
 
 void setupTIM2_ISR(){
 

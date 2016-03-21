@@ -13,6 +13,7 @@
 //externs
 extern PeachyFlagger g_Flagger;
 extern PeachyStepper g_Stepper;
+extern PeachyPrintState g_PrintState;
 
 extern uint16_t g_interrupt_count;
 extern uint16_t g_Serial_starved_count;
@@ -20,10 +21,10 @@ extern uint8_t g_Serial_starved;
 extern int32_t g_resin_height;
 extern double g_layer_float;
 
-PeachyPrintState g_PrintState;
 
 void setup()
 {
+  Serial.begin(SERIAL_BAUD);
 	pinMode(LIMIT_PIN,INPUT_PULLUP); 
 	pinMode(LED_RED_PIN,OUTPUT); 
 	pinMode(LED_BLUE_PIN,OUTPUT); 
@@ -38,7 +39,6 @@ void setup()
 	initialize_flags();
   printSetups();
   
-  Serial.begin(SERIAL_BAUD);
 
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
@@ -52,8 +52,7 @@ void loop()
 	//debug function:
   if (g_interrupt_count>5000){
     tmp_count=g_interrupt_count;
-    Serial.print("Interrupt Count=");
-    Serial.println(tmp_count);
+    Serial.write("5000+\n");
     g_interrupt_count=0;
   }
 
@@ -65,7 +64,7 @@ void loop()
 	oneSecondHandler();
 
 	//Handle the print state machine
-	g_PrintState.handlePrintState();
+	g_PrintState.handlePrintStates();
 
 }
 
@@ -93,11 +92,8 @@ void findUpperLimit(){
       g_Stepper.move(STEPPER_UP);
     }
   }
-	Serial.write("AFTER serialEvent\n");
   g_Stepper.move(STEPPER_DOWN,LIMIT_SWITCH_BUFFER_STEPS);
-	Serial.write("AFTER serialEvent move \n");
   g_Stepper.waitForMove();
-	Serial.write("AFTER serialEvent waitForMove\n");
   g_Stepper.zeroPosition();
   goToNewStartHeight();
 }

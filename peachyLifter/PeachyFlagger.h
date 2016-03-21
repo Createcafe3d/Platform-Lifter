@@ -5,8 +5,8 @@
 #include "PeachyDefines.h"
 
 struct Flag_info{
-	uint16_t trig_count;
-	uint16_t current_count;
+	uint32_t trig_count;
+	uint32_t current_count;
 	uint8_t flag_state;	
 	uint8_t enabled;
 };
@@ -16,8 +16,8 @@ class PeachyFlagger
 public:
 	PeachyFlagger();
 
-	uint8_t registerFlag(uint16_t trig_count);
-	void updateTrigCount(uint8_t id, uint16_t new_trig_count);
+	uint8_t registerFlag(uint32_t trig_count);
+	void updateTrigCount(uint8_t id, uint32_t new_trig_count);
 	void clearFlag(uint8_t id);
 
 	void decrimentFlag(uint8_t id);
