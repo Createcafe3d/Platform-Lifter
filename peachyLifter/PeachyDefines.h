@@ -2,17 +2,16 @@
 #define _PEACHY_DEFINES
 
 //Pin definitions:
+#define HEIGHT_ANALOG_PIN A0
+#define DRIP_PIN A4
+#define CAMERA_PIN A5
 #define LED_RED_PIN 6
 #define LED_BLUE_PIN 7
 #define LED_YELLOW_PIN 8
-#define DRIP_PIN A4
-#define CAMERA_PIN A5
-#define LIMIT_PIN 12
-
-#define RESET_BUTTON_PIN 11
 #define START_BUTTON_PIN 9
 #define HEIGHT_BUTTON_PIN 10
-#define HEIGHT_ANALOG_PIN A0
+#define RESET_BUTTON_PIN 11
+#define LIMIT_PIN 12
 
 //Define Print states, as the total machine between layers
 #define NUMBER_PRINT_STATES 6

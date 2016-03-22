@@ -49,6 +49,7 @@ class PeachyPrintState
 		void externalTrigger(){m_external_triggered=true;}
 		void start(uint8_t);
 		void stop();
+		void start();
 
 		//Steps to print:
 		//1) DRAWING: draw a layer

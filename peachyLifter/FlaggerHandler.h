@@ -28,6 +28,7 @@ void limitSwitchHandler();
 void buttonHandler();
 void dripHandler();
 void analogHeightHandler();
+void startButtonHandler();
 
 #endif
 

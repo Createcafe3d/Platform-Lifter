@@ -25,12 +25,15 @@ extern double g_layer_float;
 void setup()
 {
   Serial.begin(SERIAL_BAUD);
-	pinMode(LIMIT_PIN,INPUT_PULLUP); 
+  pinMode(DRIP_PIN,OUTPUT);
+  pinMode(CAMERA_PIN,OUTPUT);
 	pinMode(LED_RED_PIN,OUTPUT); 
 	pinMode(LED_BLUE_PIN,OUTPUT); 
-  pinMode(DRIP_PIN,OUTPUT);
-  pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
+	pinMode(LED_YELLOW_PIN,OUTPUT); 
+  pinMode(START_BUTTON_PIN,INPUT_PULLUP);
   pinMode(HEIGHT_BUTTON_PIN,INPUT_PULLUP);
+  pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
+	pinMode(LIMIT_PIN,INPUT_PULLUP); 
 
 	noInterrupts();
 	setupTIM2_ISR();
@@ -87,43 +90,43 @@ void initializePrintStates(){
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PRINTING,
 			5.0,//seconds delay
 			-10.0, //mm from resin
-			false, //photo during delay (true|false)
-			false, //photo before delay (true|false)
-			false, //photo after delay (true|false)
-			false);//wait for an external trigger? (ie: layer done message)
+			true, //photo during delay (true|false)
+			true, //photo before delay (true|false)
+			true, //photo after delay (true|false)
+			true);//wait for an external trigger? (ie: layer done message)
 
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_RESURRECTING,
 			5.0,//seconds delay
 			-20.0, //mm from resin
-			false, //photo during delay (true|false)
-			false, //photo before delay (true|false)
-			false, //photo after delay (true|false)
+			true, //photo during delay (true|false)
+			true, //photo before delay (true|false)
+			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_SUBMERGING,
 			0.5,//seconds delay
 			0.0, //mm from resin
-			false, //photo during delay (true|false)
-			false, //photo before delay (true|false)
-			false, //photo after delay (true|false)
+			true, //photo during delay (true|false)
+			true, //photo before delay (true|false)
+			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_LIFTING,
 			0.5,//seconds delay
 			-40.0, //mm from resin
-			false, //photo during delay (true|false)
+			true, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_FLOWING,
 			5.0, //seconds delay
 			-30.0, //mm from resin
-			false, //photo during delay (true|false)
+			true, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PREPRINTING,
 			5.0,//seconds delay
 			0.0, //mm from resin
-			false, //photo during delay (true|false)
+			true, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
@@ -160,5 +163,6 @@ void goToNewStartHeight()
 	g_resin_height = (0-(int32_t)analog_result*ANALOG_SCALER);
 	g_layer_float = g_resin_height;
   g_Stepper.moveTo(g_resin_height); //0 minus so that we travel DOWN to absolute positions, relative to 0
+	g_PrintState.start(0); //Start over
 }
 

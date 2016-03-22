@@ -14,6 +14,10 @@ void PeachyPrintState::setResinHeight(int32_t height){
 	m_resin_height_steps=height;
 }
 
+void PeachyPrintState::start(){
+	g_Flagger.enable(m_flagger_id_state);
+}
+
 void PeachyPrintState::stop(){
 	g_Flagger.disable(m_flagger_id_state);
 }
@@ -75,7 +79,7 @@ void PeachyPrintState::handlePrintStates(){
 void PeachyPrintState::pictureHandler(){
 	//Figure out when to turn it off
 	if (g_Flagger.getFlag(m_flagger_id_picture)){
-		Serial.write("Picture handler Flagged\n");
+		Serial.write("pic\n");
 		digitalWrite(CAMERA_PIN,0);
 		m_picture_pin_state=0;
 		g_Flagger.disable(m_flagger_id_picture);
@@ -113,16 +117,24 @@ void PeachyPrintState::handleStartPrintState(){
 
 		//Finish the current State (are we finishing this state?)
 		if (m_finished_state) {
+			//This should be a NAND... deMorgan another day
 			if (m_printStates[m_printState].externalTrigger == true ){
 				if (m_external_triggered){
+					Serial.write("got external Trigger!\n");
 					m_finished_state=false;
+					m_external_triggered=0;
 					update_trig_count=1;
+					taken_during_picture=0;
+					taken_before_picture=0;
+					m_printState = (m_printState+1)%NUMBER_PRINT_STATES; //Move to next stage
 					g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps);
 				}
 			}
-			else{ //else I'm done move on
+			else{ //else I'm done move on and reset states
 				m_finished_state=false;
 				update_trig_count=1; //update to the next delay
+				taken_during_picture=0;
+				taken_before_picture=0;
 				m_printState = (m_printState+1)%NUMBER_PRINT_STATES; //Move to next stage
 				g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps); //go there
 			}

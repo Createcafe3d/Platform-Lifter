@@ -54,9 +54,20 @@ void limitSwitchHandler(){
 	g_Flagger.clearFlag(g_limit_switch_flag);
 }
 
+void startButtonHandler(){
+	if (digitalRead(START_BUTTON_PIN) == 0){
+		Serial.write("HIT START\n");
+		g_PrintState.externalTrigger();
+	}
+}
+
 //Both Buttons, reset and initialize analog
 void buttonHandler(){
 	if (g_Flagger.getFlag(g_buttons_flag)){
+		//Start Button (debug trigger)
+		startButtonHandler();
+
+		//Reset Button (red)
 		if (digitalRead(RESET_BUTTON_PIN) == 0){
 			digitalWrite(LED_RED_PIN,0);
 			digitalWrite(LED_YELLOW_PIN,0);
@@ -65,6 +76,7 @@ void buttonHandler(){
 			g_Stepper.limited(0);
 			findUpperLimit();
 		}
+		//Set Height Button (blue)
 		if (g_system_state == STATE_NORMAL){
 			//NORMAL
 			if (digitalRead(HEIGHT_BUTTON_PIN) == 0){
@@ -74,7 +86,7 @@ void buttonHandler(){
 			}
 		}
 		else if (g_system_state == STATE_LIMITED){
-			//LIMITED
+			//LIMITED case
 			if (digitalRead(RESET_BUTTON_PIN) == 0){
 				findUpperLimit();
 				digitalWrite(LED_RED_PIN,0);
