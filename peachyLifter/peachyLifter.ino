@@ -37,18 +37,18 @@ void setup()
   interrupts();
 
 	initialize_flags();
-  printSetups();
+	initializePrintStates();
+  //printSetups();
   
-
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
+	g_PrintState.setResinHeight(g_resin_height); //figured out by findUpperLimit;
+	g_PrintState.start(PRINT_STATE_PRINTING);//Choose starting state
 }
 
 void loop()
 {
   uint16_t tmp_count;
-  uint8_t stepper_direction;
-  
 	//debug function:
   if (g_interrupt_count>5000){
     tmp_count=g_interrupt_count;
@@ -81,6 +81,54 @@ ISR(TIMER2_OVF_vect){
   g_Stepper.microStep();
 	serialCheckStarved();
   //Interrupt Flag cleared automagically
+}
+
+void initializePrintStates(){
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PRINTING,
+			5.0,//seconds delay
+			-10.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_RESURRECTING,
+			5.0,//seconds delay
+			-20.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_SUBMERGING,
+			0.5,//seconds delay
+			0.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_LIFTING,
+			0.5,//seconds delay
+			-40.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_FLOWING,
+			5.0, //seconds delay
+			-30.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PREPRINTING,
+			5.0,//seconds delay
+			0.0, //mm from resin
+			false, //photo during delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
+			false);//wait for an external trigger? (ie: layer done message)
+
+	//g_PrintState.printStates();
 }
 
 void findUpperLimit(){

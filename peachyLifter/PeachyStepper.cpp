@@ -11,24 +11,36 @@ PeachyStepper::PeachyStepper(uint8_t hold_torque){
 	m_microstep_counter = 0;
 	m_speed=1; //Max Speed 2->half 3->third
 	m_speed_counter=0;
+	m_limited=0;
 }
 
 void PeachyStepper::move(uint8_t direction,uint32_t steps){
 	//direction 0 or 1 depending on the wiring
-	if (direction == STEPPER_DOWN)
-		m_commanded_position-=steps;
-	else if (direction == STEPPER_UP)
-		m_commanded_position+=steps;
-	setDirection();
+	if (m_limited==0){
+		if (direction == STEPPER_DOWN)
+			m_commanded_position-=steps;
+		else if (direction == STEPPER_UP)
+			m_commanded_position+=steps;
+		setDirection();
+	}
 }
 
 void PeachyStepper::move(uint8_t direction){
 	//direction 0 or 1 depending on the wiring
-	if (direction == STEPPER_DOWN)
-		m_commanded_position--;
-	else if (direction == STEPPER_UP)
-		m_commanded_position++;
-	setDirection();
+	if (m_limited==0){
+		if (direction == STEPPER_DOWN)
+			m_commanded_position--;
+		else if (direction == STEPPER_UP)
+			m_commanded_position++;
+		setDirection();
+	}
+}
+
+void PeachyStepper::moveTo(int32_t position){ 
+	if (m_limited==0){
+		m_commanded_position=position;
+		setDirection();
+	}
 }
 
 void PeachyStepper::waitForMove(){
@@ -37,6 +49,10 @@ void PeachyStepper::waitForMove(){
 	while(stepper_direction != STEPPER_STABLE){
 		stepper_direction = getDirection();
 	} 
+}
+
+void PeachyStepper::limited(uint8_t state){
+	m_limited=state;
 }
 
 void PeachyStepper::step(){

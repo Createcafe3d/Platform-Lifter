@@ -34,7 +34,6 @@ void initialize_flags(){
 void oneSecondHandler(){
 	static uint8_t move_direction=0;
 	if (g_Flagger.getFlag(g_1000ms_flag)){
-		Serial.write("Switching BLUE\n");
 		digitalWrite(LED_BLUE_PIN, move_direction); //Toggle LED
 		move_direction = !move_direction;
 		g_Flagger.clearFlag(g_1000ms_flag);
@@ -48,6 +47,7 @@ void limitSwitchHandler(){
 			digitalWrite(LED_RED_PIN,1);
 			g_Stepper.stop();
 			g_Stepper.move(STEPPER_DOWN,STEPPER_LIMIT_BOUNCEBACK);
+			g_Stepper.limited(1);
 			g_system_state=STATE_LIMITED;
 		}
 	}
@@ -62,6 +62,7 @@ void buttonHandler(){
 			digitalWrite(LED_YELLOW_PIN,0);
 			g_Stepper.stop();
 			g_system_state=STATE_NORMAL;
+			g_Stepper.limited(0);
 			findUpperLimit();
 		}
 		if (g_system_state == STATE_NORMAL){

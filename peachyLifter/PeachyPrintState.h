@@ -1,16 +1,6 @@
 #ifndef _PEACHY_PRINTSTATE
 #define _PEACHY_PRINTSTATE
 
-#define NUMBER_PRINT_STATES 6
-
-#define PRINT_STATE_PRINTING 0
-#define PRINT_STATE_RESURRECTING 1
-#define PRINT_STATE_SUBMERGING 2
-#define PRINT_STATE_LIFTING 3
-#define PRINT_STATE_FLOWING 4
-#define PRINT_STATE_PREPRINTING 5
-
-#define CAMERA_PIN A5
 
 #define PICTURE_QUICK_TIME  0.1 //seconds
 #define PICTURE_QUICK_TICKS PICTURE_QUICK_TIME/TICK_TIME
@@ -42,7 +32,7 @@ class PeachyPrintState
 		PeachyPrintState();
 
 		//Seconds and Millimeters
-		void initializeStateDistanceTime(uint8_t state, float delay=0.0, float height_from_resin=0, uint8_t photoBeforeDelay=false, uint8_t photoAfterDelay=false, uint8_t externalTrigger=false);
+		void initializeStateDistanceTime(uint8_t state, float delay=0.0, float height_from_resin=0, uint8_t photoDuringDelay=false, uint8_t photoBeforeDelay=false, uint8_t photoAfterDelay=false, uint8_t externalTrigger=false);
 
 		//Ticks and Steps
 		void initializeState(uint8_t state, uint16_t delay=0, int32_t height=0,uint8_t photoDuringDelay=false, uint8_t photoBeforeDelay=false, uint8_t photoAfterDelay=false, uint8_t externalTrigger=false);
@@ -50,11 +40,15 @@ class PeachyPrintState
 		void initializeFlags();
 		void takePicture();
 		void takeDuringPicture();
+		void setResinHeight(int32_t);
 		void pictureHandler();
 		void handleFinishedPrintState();
 		void handleStartPrintState();
 		void handlePrintStates();
+		void printStates();//debug
 		void externalTrigger(){m_external_triggered=true;}
+		void start(uint8_t);
+		void stop();
 
 		//Steps to print:
 		//1) DRAWING: draw a layer

@@ -4,5 +4,6 @@
 void findUpperLimit();
 void goToNewStartHeight();
 void printSetups();
+void initializePrintStates();
 
 #endif

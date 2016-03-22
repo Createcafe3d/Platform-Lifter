@@ -10,15 +10,36 @@ PeachyPrintState::PeachyPrintState(){
 	m_printState = PRINT_STATE_PRINTING;
 }
 
+void PeachyPrintState::setResinHeight(int32_t height){
+	m_resin_height_steps=height;
+}
+
+void PeachyPrintState::stop(){
+	g_Flagger.disable(m_flagger_id_state);
+}
+
+void PeachyPrintState::start(uint8_t startState){
+	m_printState=startState;
+	g_Flagger.updateTrigCount(m_flagger_id_state, m_printStates[m_printState].delay_ticks);
+}
+
 void PeachyPrintState::initializeFlags(){
 	m_flagger_id_state = g_Flagger.registerFlag(0); //disabled for now
 	m_flagger_id_picture = g_Flagger.registerFlag(0); //disabled for now
 }
 
-void PeachyPrintState::initializeStateDistanceTime(uint8_t state, float delay, float height_from_resin, uint8_t photoBeforeDelay, uint8_t photoAfterDelay, uint8_t externalTrigger){
+void PeachyPrintState::initializeStateDistanceTime(uint8_t state, float delay, float height_from_resin, uint8_t photoDuringDelay, uint8_t photoBeforeDelay, uint8_t photoAfterDelay, uint8_t externalTrigger){
 			uint16_t tick_delay = delay/TICK_TIME;
 			int32_t step_height = (height_from_resin/MILLIMETERS_PER_STEP)+m_resin_height_steps;
-			initializeState(state, tick_delay, step_height, photoBeforeDelay, photoAfterDelay);
+			initializeState(state, tick_delay, step_height, photoDuringDelay, photoBeforeDelay, photoAfterDelay, externalTrigger);
+}
+
+void PeachyPrintState::printStates(){
+	Serial.write("printing ALL printStates\n");
+	for (uint8_t i=0;i<NUMBER_PRINT_STATES;i++){
+		Serial.println(m_printStates[i].delay_ticks);
+		Serial.println(m_printStates[i].absoluteHeight_steps);
+	}
 }
 
 void PeachyPrintState::initializeState(uint8_t state, uint16_t delay, int32_t height ,uint8_t photoDuringDelay, uint8_t photoBeforeDelay, uint8_t photoAfterDelay, uint8_t externalTrigger){
@@ -47,13 +68,14 @@ void PeachyPrintState::takeDuringPicture(){
 
 void PeachyPrintState::handlePrintStates(){
 	pictureHandler();
-	handleFinishedPrintState();
 	handleStartPrintState();
+	handleFinishedPrintState();
 }
 
 void PeachyPrintState::pictureHandler(){
 	//Figure out when to turn it off
 	if (g_Flagger.getFlag(m_flagger_id_picture)){
+		Serial.write("Picture handler Flagged\n");
 		digitalWrite(CAMERA_PIN,0);
 		m_picture_pin_state=0;
 		g_Flagger.disable(m_flagger_id_picture);
@@ -75,6 +97,7 @@ void PeachyPrintState::handleFinishedPrintState(){
 				taken_after_picture=0;
 				m_finished_state=true;//Done!
 				g_Flagger.clearFlag(m_flagger_id_state);
+				g_Flagger.disable(m_flagger_id_state);
 			}
 		}
 	}
@@ -88,7 +111,7 @@ void PeachyPrintState::handleStartPrintState(){
 	//Check that we still aren't taking a picture
 	if (m_picture_pin_state == 0){
 
-		//Finish the current State
+		//Finish the current State (are we finishing this state?)
 		if (m_finished_state) {
 			if (m_printStates[m_printState].externalTrigger == true ){
 				if (m_external_triggered){
@@ -97,14 +120,15 @@ void PeachyPrintState::handleStartPrintState(){
 					g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps);
 				}
 			}
-			else{
+			else{ //else I'm done move on
 				m_finished_state=false;
-				update_trig_count=1;
-				g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps);
+				update_trig_count=1; //update to the next delay
+				m_printState = (m_printState+1)%NUMBER_PRINT_STATES; //Move to next stage
+				g_Stepper.moveTo(m_printStates[m_printState].absoluteHeight_steps); //go there
 			}
 		}
 
-		//Else kick off the next state (when done moving)
+		//Else kick off the next state (when we are done moving to it)
 		else if (g_Stepper.getDirection() == STEPPER_STABLE)  {
 			if (update_trig_count == 1){
 				m_external_triggered=false; //Zero the external trigger every time we update the trig count

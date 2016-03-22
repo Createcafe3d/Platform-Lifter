@@ -28,7 +28,8 @@ class PeachyStepper
 
 		void setSpeed(uint8_t speed) { m_speed=speed; }
 		void stop() { m_commanded_position=m_current_position; }
-		void moveTo(int32_t position){ m_commanded_position=position; }
+		void limited(uint8_t state);
+		void moveTo(int32_t position);
 		void zeroPosition(){
 			m_current_position = 0;
 			m_commanded_position = 0;
@@ -66,6 +67,7 @@ class PeachyStepper
 		uint8_t m_microstep_counter;
 		uint8_t m_speed;
 		uint8_t m_speed_counter;
+		uint8_t m_limited;
 		uint8_t m_force_pins;
 		int32_t m_commanded_position;
 		int32_t m_current_position;

@@ -6,12 +6,22 @@
 #define LED_BLUE_PIN 7
 #define LED_YELLOW_PIN 8
 #define DRIP_PIN A4
+#define CAMERA_PIN A5
 #define LIMIT_PIN 12
 
 #define RESET_BUTTON_PIN 11
 #define START_BUTTON_PIN 9
 #define HEIGHT_BUTTON_PIN 10
 #define HEIGHT_ANALOG_PIN A0
+
+//Define Print states, as the total machine between layers
+#define NUMBER_PRINT_STATES 6
+#define PRINT_STATE_PRINTING 0
+#define PRINT_STATE_RESURRECTING 1
+#define PRINT_STATE_SUBMERGING 2
+#define PRINT_STATE_LIFTING 3
+#define PRINT_STATE_FLOWING 4
+#define PRINT_STATE_PREPRINTING 5
 
 //The digital pins used for the stepper driver
 #define STEPPER_PIN0 2
@@ -74,8 +84,8 @@
 #define SERIAL_BYTE_TICKS			SERIAL_STARVE_TICKS/SERIAL_BUFFER_BYTES
 
 #define MICROMETERS_PER_LAYER 200 //my best guess - Will
-#define MICROMETERS_PER_STEP  (25.4 / 2) //two microsteps per 1 thou (inch) - Rylan
-#define MILLIMETERS_PER_STEP				MICROMETERS_PER_STEP/1e3
+#define MICROMETERS_PER_STEP  (double)(25.4 / 2) //two microsteps per 1 thou (inch) - Rylan
+#define MILLIMETERS_PER_STEP	(double)(MICROMETERS_PER_STEP/1e3)
 #define STEPS_PER_LAYER				MICROMETERS_PER_LAYER/MICROMETERS_PER_STEP
 
 #endif

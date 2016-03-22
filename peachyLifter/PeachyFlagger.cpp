@@ -20,8 +20,6 @@ uint8_t PeachyFlagger::registerFlag(uint32_t trig_count){
 		m_flags[m_num_flags].enabled=1;	
 	else
 		m_flags[m_num_flags].enabled=0;	
-	Serial.write("NumberFlags: ");
-	Serial.println(m_num_flags);
 	m_num_flags++;
 	return flag_id;
 }
