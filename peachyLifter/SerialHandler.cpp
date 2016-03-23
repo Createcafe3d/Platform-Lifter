@@ -29,6 +29,7 @@ void serialPrintDone(){
 void nextLayer(){
 	g_layer_float-=STEPS_PER_LAYER;
 	g_PrintState.updateHeightSteps(PRINT_STATE_PRINTING,(int32_t)g_layer_float); //once it's ready also trigger end of current layer
+	g_PrintState.externalTrigger(PRINT_STATE_PRINTING);
 }
 
 void sendHello(){
@@ -56,10 +57,11 @@ void handleChar(){
 			case 'E':
 				//LAYER ENDED
 				serialLayer(OFF);
+				nextLayer();
 				//break;
 			case 'H':
 				//NEXT LAYER
-				nextLayer();
+				//nextLayer();
 				break;
 			case 'D':
 				//it gave me the D .... -_-
