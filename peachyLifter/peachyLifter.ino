@@ -100,43 +100,43 @@ ISR(TIMER2_OVF_vect){
 
 void initializePrintStates(){
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PRINTING,
-			5.0,//seconds delay
-			-10.0, //mm from resin
+			0.1,//seconds delay
+			0.0, //mm from resin
 			true, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			true);//wait for an external trigger? (ie: layer done message)
 
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_RESURRECTING,
-			5.0,//seconds delay
-			-20.0, //mm from resin
+			1.0,//seconds delay
+			0.0, //mm from resin
 			false, //photo during delay (true|false)
 			true, //photo before delay (true|false)
 			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_SUBMERGING,
-			0.5,//seconds delay
-			0.0, //mm from resin
+			1.0,//seconds delay
+			-5.0, //mm from resin
 			false, //photo during delay (true|false)
 			true, //photo before delay (true|false)
 			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_LIFTING,
 			0.5,//seconds delay
-			-40.0, //mm from resin
+			4.0, //mm from resin
 			false, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_FLOWING,
-			5.0, //seconds delay
-			-30.0, //mm from resin
+			1.0, //seconds delay
+			-1.0, //mm from resin
 			false, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PREPRINTING,
-			5.0,//seconds delay
+			1.0,//seconds delay
 			0.0, //mm from resin
 			false, //photo during delay (true|false)
 			true, //photo before delay (true|false)
