@@ -1,7 +1,12 @@
 #include "SerialHandler.h"
 
+#ifdef PEACHY_STROBE
+	extern PeachyStrobeStepper g_Stepper;
+#else
+	extern PeachyStepper g_Stepper;
+#endif
+
 //externs
-extern PeachyStepper g_Stepper;
 extern PeachyPrintState g_PrintState;
 extern uint8_t g_Serial_starved;
 extern uint16_t g_Serial_starved_count;

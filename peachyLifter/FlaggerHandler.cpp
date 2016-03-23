@@ -1,9 +1,14 @@
 #include "FlaggerHandler.h"
 #include "PeachyTimer2Setup.h"
 
+#ifdef STEPPER_STROBE
+	extern PeachyStrobeStepper g_Stepper;
+#else
+	extern PeachyStepper g_Stepper;
+#endif
+
 //externals
 extern PeachyFlagger g_Flagger;
-extern PeachyStepper g_Stepper;
 extern PeachyPrintState g_PrintState;
 
 extern uint8_t g_dripper_state;
@@ -135,7 +140,7 @@ void dripHandler(){
 			drip=false;
 		}
 
-		if ((drip)){// | (g_dripper_state == ON)){
+		if ((drip)){
 			for (uint8_t i=0; i<DRIP_TOGGLES; i++){
 				digitalWrite(DRIP_PIN,1);
 				delayMicroseconds(100);
@@ -143,6 +148,6 @@ void dripHandler(){
 				delayMicroseconds(100);
 			}
 		}
-	g_Flagger.clearFlag(g_drip_flag);
+		g_Flagger.clearFlag(g_drip_flag);
 	}
 }

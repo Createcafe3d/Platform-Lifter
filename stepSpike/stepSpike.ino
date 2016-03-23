@@ -1,9 +1,9 @@
 #include "Arduino.h"
 #include <stdint.h>
 
-#define STEPPER_EN_PIN 6
-#define STEPPER_DIR_PIN 7
-#define STEPPER_STEP_PIN 8
+#define STEPPER_EN_PIN 2
+#define STEPPER_DIR_PIN 3
+#define STEPPER_STEP_PIN 4
 #define LED1_PIN 10 
 #define LED2_PIN 9 
 

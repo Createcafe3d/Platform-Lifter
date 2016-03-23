@@ -37,10 +37,10 @@ class PeachyStepper
 
 		void move(uint8_t direction,uint32_t steps);
 		void move(uint8_t direction);
-
     void waitForMove();
-		void step();
-		void microStep();
+
+		virtual void microStep();
+		virtual void step();
 
 
 		int32_t getPosition(){
@@ -60,19 +60,21 @@ class PeachyStepper
 			return m_direction;
 		}
 
-	private:
+	protected:
 		uint8_t m_direction;
+		uint8_t m_limited;
+		int32_t m_commanded_position;
+		int32_t m_current_position;
+    void setDirection();
+
+	private:
 		uint8_t m_hold_torque;
 		uint8_t m_step_state;
 		uint8_t m_microstep_counter;
 		uint8_t m_speed;
 		uint8_t m_speed_counter;
-		uint8_t m_limited;
 		uint8_t m_force_pins;
-		int32_t m_commanded_position;
-		int32_t m_current_position;
 
-    void setDirection();
 		void shift_step();
 		void pins_off();
 		void pins_on();

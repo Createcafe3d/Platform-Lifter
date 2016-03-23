@@ -1,6 +1,9 @@
 #ifndef _PEACHY_DEFINES
 #define _PEACHY_DEFINES
 
+#define STEPPER_STROBE //If this is defined use the strobe, else use the 3 pin
+//#define CLOCK_HACK	 //If this is defined, force the clock up to 16MHz with register writes
+
 //Pin definitions:
 #define HEIGHT_ANALOG_PIN A0
 #define DRIP_PIN A4
@@ -23,6 +26,10 @@
 #define PRINT_STATE_PREPRINTING 5
 
 //The digital pins used for the stepper driver
+//#define STEPPER_PIN0 2
+//#define STEPPER_PIN1 3
+//#define STEPPER_PIN2 4
+//#define STEPPER_PIN3 5
 #define STEPPER_PIN0 2
 #define STEPPER_PIN1 3
 #define STEPPER_PIN2 4
@@ -64,7 +71,7 @@
 // 200e-6 * 16e6 / 64 = 50
 // WARNING: that number must be between 0-255
 #define CPU_FREQ 16e6 //Hz
-#define TICK_TIME 500e-6 //seconds
+#define TICK_TIME 500e-5 //seconds
 #define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function settings
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER) //Must be less than 256
 //Example:
@@ -73,7 +80,7 @@
 // 500 ticks == 100ms
 
 //Set Baud to match. Default: 9600
-#define SERIAL_BAUD					9600 //bits/s
+#define SERIAL_BAUD					115200 //bits/s
 #define SERIAL_BUFFER_BYTES 64
 #define SERIAL_BUFFER				SERIAL_BUFFER_BYTES*8 //bits
 

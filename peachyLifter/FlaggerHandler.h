@@ -5,6 +5,7 @@
 #include "PeachyTimer2Setup.h" //for the global flagger
 #include "PeachyMain.h"
 #include "SerialHandler.h" //for dripper state
+#include "PeachyStrobeStepper.h"
 #include <stdint.h>
 
 #define STEPPER_LIMIT_BOUNCEBACK 20

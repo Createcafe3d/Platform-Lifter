@@ -1,7 +1,12 @@
 #include "PeachyPrintState.h"
 
+#ifdef STEPPER_STROBE
+	extern PeachyStrobeStepper g_Stepper;
+#else
+	extern PeachyStepper g_Stepper;
+#endif
+
 extern PeachyFlagger g_Flagger;
-extern PeachyStepper g_Stepper;
 
 PeachyPrintState::PeachyPrintState(){
 	m_layerHeight_mm = MICROMETERS_PER_LAYER*1e3; //for now

@@ -10,9 +10,14 @@
 #include "FlaggerHandler.h"
 #include "PeachyPrintState.h"
 
+#ifdef STEPPER_STROBE
+	extern PeachyStrobeStepper g_Stepper;
+#else
+	extern PeachyStepper g_Stepper;
+#endif
+
 //externs
 extern PeachyFlagger g_Flagger;
-extern PeachyStepper g_Stepper;
 extern PeachyPrintState g_PrintState;
 
 extern uint16_t g_interrupt_count;
@@ -23,7 +28,6 @@ extern int32_t g_resin_height;
 extern uint8_t g_drips_requested;
 
 double g_layer_float;
-
 
 void setup()
 {
@@ -37,6 +41,10 @@ void setup()
   pinMode(HEIGHT_BUTTON_PIN,INPUT_PULLUP);
   pinMode(RESET_BUTTON_PIN,INPUT_PULLUP);
 	pinMode(LIMIT_PIN,INPUT_PULLUP); 
+	pinMode(STEPPER_PIN0,OUTPUT);
+	pinMode(STEPPER_PIN1,OUTPUT);
+	pinMode(STEPPER_PIN2,OUTPUT);
+	pinMode(STEPPER_PIN3,OUTPUT);
 
 	noInterrupts();
 	setupTIM2_ISR();
@@ -44,13 +52,15 @@ void setup()
 
 	initialize_flags();
 	initializePrintStates();
-  //printSetups();
   
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
 	g_PrintState.setResinHeight(g_resin_height); //figured out by findUpperLimit;
 	g_PrintState.start(PRINT_STATE_PRINTING);//Choose starting state
 	g_drips_requested=1;
+
+	Serial.write("It almost Started!\n");
+	Serial.write("Done Stepper Test\n");
 }
 
 void loop()

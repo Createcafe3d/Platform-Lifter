@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include "PeachyStepper.h"
 
-
 PeachyStepper::PeachyStepper(uint8_t hold_torque){
 	m_current_position=0;
 	m_commanded_position=0;

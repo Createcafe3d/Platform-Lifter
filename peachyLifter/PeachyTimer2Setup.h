@@ -4,6 +4,7 @@
 #include "PeachyDefines.h"
 #include "PeachyFlagger.h"
 #include "PeachyStepper.h"
+#include "PeachyStrobeStepper.h"
 #include "PeachyPrintState.h"
 #include "Arduino.h"
 #include <stdint.h>
