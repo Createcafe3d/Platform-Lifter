@@ -11,12 +11,13 @@ extern PeachyFlagger g_Flagger;
 PeachyPrintState::PeachyPrintState(){
 	m_layerHeight_mm = MICROMETERS_PER_LAYER*1e3; //for now
 	m_layerHeight_steps = (uint16_t)((m_layerHeight_mm*1000)/MICROMETERS_PER_STEP);
-	m_resin_height_steps = 0;
 	m_printState = PRINT_STATE_PRINTING;
 }
 
 void PeachyPrintState::setResinHeight(int32_t height){
 	m_resin_height_steps=height;
+	Serial.write("resin_height_steps : ");
+	Serial.println(m_resin_height_steps);
 }
 
 void PeachyPrintState::start(){
