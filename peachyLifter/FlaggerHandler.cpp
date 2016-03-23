@@ -57,8 +57,9 @@ void limitSwitchHandler(){
 void startButtonHandler(){
 	if (digitalRead(START_BUTTON_PIN) == 0){
 		Serial.write("START\n");
-		g_PrintState.start(); //Start it if it isn't already moving.
+		g_PrintState.start(0); //Start it if it isn't already moving.
 		g_PrintState.externalTrigger();
+		g_drips_requested=1;
 	}
 }
 
