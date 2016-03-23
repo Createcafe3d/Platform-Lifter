@@ -174,6 +174,7 @@ void goToNewStartHeight()
   analog_result = analogRead(HEIGHT_ANALOG_PIN);
 	g_resin_height = (0-(int32_t)analog_result*ANALOG_SCALER);
 	g_layer_float = g_resin_height;
+	g_PrintState.setResinHeight(g_resin_height);
   g_Stepper.moveTo(g_resin_height); //0 minus so that we travel DOWN to absolute positions, relative to 0
 	g_PrintState.start(0); //Start over
 }
