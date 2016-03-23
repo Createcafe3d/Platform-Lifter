@@ -2,7 +2,7 @@
 #define _PEACHY_DEFINES
 
 #define STEPPER_STROBE //If this is defined use the strobe, else use the 3 pin
-//#define CLOCK_HACK	 //If this is defined, force the clock up to 16MHz with register writes
+#define CLOCK_HACK	 //If this is defined, force the clock up to 16MHz with register writes
 
 //Pin definitions:
 #define HEIGHT_ANALOG_PIN A0
@@ -71,7 +71,7 @@
 // 200e-6 * 16e6 / 64 = 50
 // WARNING: that number must be between 0-255
 #define CPU_FREQ 16e6 //Hz
-#define TICK_TIME 500e-5 //seconds
+#define TICK_TIME 250e-6 //seconds
 #define TIM2_PRESCALER 64 //Dependant on the setupTIM2_ISR() function settings
 #define TIM2_START (uint8_t)(256-TICK_TIME*CPU_FREQ/TIM2_PRESCALER) //Must be less than 256
 //Example:

@@ -61,18 +61,19 @@ class PeachyStepper
 		}
 
 	protected:
+    void setDirection();
+
 		uint8_t m_direction;
 		uint8_t m_limited;
 		int32_t m_commanded_position;
 		int32_t m_current_position;
-    void setDirection();
+		uint8_t m_speed;
+		uint8_t m_speed_counter;
 
 	private:
 		uint8_t m_hold_torque;
 		uint8_t m_step_state;
 		uint8_t m_microstep_counter;
-		uint8_t m_speed;
-		uint8_t m_speed_counter;
 		uint8_t m_force_pins;
 
 		void shift_step();
