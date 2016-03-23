@@ -80,7 +80,7 @@
 // 500 ticks == 100ms
 
 //Set Baud to match. Default: 9600
-#define SERIAL_BAUD					115200 //bits/s
+#define SERIAL_BAUD					9600 //bits/s
 #define SERIAL_BUFFER_BYTES 64
 #define SERIAL_BUFFER				SERIAL_BUFFER_BYTES*8 //bits
 

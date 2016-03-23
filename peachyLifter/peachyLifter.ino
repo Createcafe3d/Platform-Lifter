@@ -51,13 +51,14 @@ void setup()
   interrupts();
 
 	initialize_flags();
-	initializePrintStates();
 
   findUpperLimit();
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
 	g_PrintState.setResinHeight(g_resin_height); //figured out by findUpperLimit;
 	g_PrintState.start(PRINT_STATE_PRINTING);//Choose starting state
 	g_drips_requested=1;
+
+	initializePrintStates();
 }
 
 void loop()
