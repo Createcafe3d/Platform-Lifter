@@ -35,6 +35,11 @@
 #define STEPPER_PIN2 4
 #define STEPPER_PIN3 5
 
+#define PICTURE_QUICK_TIME  0.1 //seconds
+#define PICTURE_QUICK_TICKS PICTURE_QUICK_TIME/TICK_TIME
+#define PICTURE_LONG_TIME  10 //seconds
+#define PICTURE_LONG_TICKS PICTURE_LONG_TIME/TICK_TIME
+
 #define MAX_NUM_FLAGS 16
 
 #define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
