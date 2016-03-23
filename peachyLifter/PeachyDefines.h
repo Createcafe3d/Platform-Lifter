@@ -1,7 +1,7 @@
 #ifndef _PEACHY_DEFINES
 #define _PEACHY_DEFINES
 
-#define STEPPER_STROBE //If this is defined use the strobe, else use the 3 pin
+//#define STEPPER_STROBE //If this is defined use the strobe, else use the 3 pin
 #define CLOCK_HACK	 //If this is defined, force the clock up to 16MHz with register writes
 
 //Pin definitions:
