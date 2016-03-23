@@ -40,6 +40,12 @@ void PeachyPrintState::initializeFlags(){
 void PeachyPrintState::initializeStateDistanceTime(uint8_t state, float delay, float height_from_resin, uint8_t photoDuringDelay, uint8_t photoBeforeDelay, uint8_t photoAfterDelay, uint8_t externalTrigger){
 			uint16_t tick_delay = delay/TICK_TIME;
 			int32_t step_height = (height_from_resin/MILLIMETERS_PER_STEP)+m_resin_height_steps;
+			Serial.write("Tick Delay: ");
+			Serial.println(tick_delay);
+			Serial.write("resin_height_steps : ");
+			Serial.println(m_resin_height_steps);
+			Serial.write("step_height: ");
+			Serial.println(step_height);
 			initializeState(state, tick_delay, step_height, photoDuringDelay, photoBeforeDelay, photoAfterDelay, externalTrigger);
 }
 
