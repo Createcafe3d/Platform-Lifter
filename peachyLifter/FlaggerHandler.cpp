@@ -56,7 +56,8 @@ void limitSwitchHandler(){
 
 void startButtonHandler(){
 	if (digitalRead(START_BUTTON_PIN) == 0){
-		Serial.write("HIT START\n");
+		Serial.write("START\n");
+		g_PrintState.start(); //Start it if it isn't already moving.
 		g_PrintState.externalTrigger();
 	}
 }
@@ -112,23 +113,35 @@ void analogHeightHandler(){
 
 void dripHandler(){
 	uint8_t drip = false;
+	static uint8_t sent_drips=0;
 
 	if (g_Flagger.getFlag(g_drip_flag)){
+		//Send the drips to start the layer
+		if ((sent_drips == 0) & (g_PrintState.getState()==PRINT_STATE_PRINTING)){
+			sent_drips=1;
+			g_drips_requested=2;
+		}
+		else if (g_PrintState.getState()!=PRINT_STATE_PRINTING){
+			sent_drips=0;
+		}
+
 		//manual dripping, set drip counts
 		if (g_drips_requested > 0){
-			g_drips_requested--;
+			g_drips_requested=g_drips_requested-1;
 			drip=true;
-			}
-		if ((drip) | (g_dripper_state == ON)){
+		}
+		else{
+			drip=false;
+		}
+
+		if ((drip)){// | (g_dripper_state == ON)){
 			for (uint8_t i=0; i<DRIP_TOGGLES; i++){
 				digitalWrite(DRIP_PIN,1);
 				delayMicroseconds(100);
 				digitalWrite(DRIP_PIN,0);
 				delayMicroseconds(100);
 			}
-			g_Flagger.clearFlag(g_drip_flag);
 		}
+	g_Flagger.clearFlag(g_drip_flag);
 	}
 }
-
-

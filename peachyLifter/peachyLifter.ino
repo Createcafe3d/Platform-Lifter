@@ -19,7 +19,10 @@ extern uint16_t g_interrupt_count;
 extern uint16_t g_Serial_starved_count;
 extern uint8_t g_Serial_starved;
 extern int32_t g_resin_height;
-extern double g_layer_float;
+
+extern uint8_t g_drips_requested;
+
+double g_layer_float;
 
 
 void setup()
@@ -47,6 +50,7 @@ void setup()
 	g_Stepper.setSpeed(1); //1/X speed, where X is the argument
 	g_PrintState.setResinHeight(g_resin_height); //figured out by findUpperLimit;
 	g_PrintState.start(PRINT_STATE_PRINTING);//Choose starting state
+	g_drips_requested=1;
 }
 
 void loop()
@@ -68,12 +72,13 @@ void loop()
 
 	//Handle the print state machine
 	g_PrintState.handlePrintStates();
-
 }
 
 //***********************************
 //*** Extra Functions ***************
 //***********************************
+
+
 
 //This function gets called every TICK_TIME
 ISR(TIMER2_OVF_vect){
@@ -91,43 +96,43 @@ void initializePrintStates(){
 			5.0,//seconds delay
 			-10.0, //mm from resin
 			true, //photo during delay (true|false)
-			true, //photo before delay (true|false)
-			true, //photo after delay (true|false)
+			false, //photo before delay (true|false)
+			false, //photo after delay (true|false)
 			true);//wait for an external trigger? (ie: layer done message)
 
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_RESURRECTING,
 			5.0,//seconds delay
 			-20.0, //mm from resin
-			true, //photo during delay (true|false)
+			false, //photo during delay (true|false)
 			true, //photo before delay (true|false)
 			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_SUBMERGING,
 			0.5,//seconds delay
 			0.0, //mm from resin
-			true, //photo during delay (true|false)
+			false, //photo during delay (true|false)
 			true, //photo before delay (true|false)
 			true, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_LIFTING,
 			0.5,//seconds delay
 			-40.0, //mm from resin
-			true, //photo during delay (true|false)
+			false, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_FLOWING,
 			5.0, //seconds delay
 			-30.0, //mm from resin
-			true, //photo during delay (true|false)
+			false, //photo during delay (true|false)
 			false, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 	g_PrintState.initializeStateDistanceTime(PRINT_STATE_PREPRINTING,
 			5.0,//seconds delay
 			0.0, //mm from resin
-			true, //photo during delay (true|false)
-			false, //photo before delay (true|false)
+			false, //photo during delay (true|false)
+			true, //photo before delay (true|false)
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 

@@ -24,6 +24,7 @@ struct PeachyStates{
 	uint8_t photoAfterDelay = false;
 	uint8_t photoDuringDelay = false;
 	uint8_t externalTrigger = false;
+	uint8_t externalTriggered = false;
 };
 
 class PeachyPrintState
@@ -38,6 +39,8 @@ class PeachyPrintState
 		void initializeState(uint8_t state, uint16_t delay=0, int32_t height=0,uint8_t photoDuringDelay=false, uint8_t photoBeforeDelay=false, uint8_t photoAfterDelay=false, uint8_t externalTrigger=false);
 
 		void initializeFlags();
+		void updateHeightSteps(uint8_t state, int32_t steps);
+		uint8_t getState();
 		void takePicture();
 		void takeDuringPicture();
 		void setResinHeight(int32_t);
@@ -46,7 +49,7 @@ class PeachyPrintState
 		void handleStartPrintState();
 		void handlePrintStates();
 		void printStates();//debug
-		void externalTrigger(){m_external_triggered=true;}
+		void externalTrigger(uint8_t state=0);
 		void start(uint8_t);
 		void stop();
 		void start();
@@ -68,7 +71,6 @@ class PeachyPrintState
 		uint8_t m_picture_pin_state;
 		uint8_t m_printState;
 		uint8_t m_finished_state=false;
-		uint8_t m_external_triggered=false; //cleared each time we change state
 		int32_t m_resin_height_steps;
 
 		float m_layerHeight_mm;       //mm per layer

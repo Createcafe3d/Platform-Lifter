@@ -67,8 +67,20 @@ void PeachyPrintState::takeDuringPicture(){
 	g_Flagger.updateTrigCount(m_flagger_id_picture, PICTURE_LONG_TICKS); //enable it and clear it 
 	m_picture_pin_state=1;
 	digitalWrite(CAMERA_PIN,1);
-
 }
+
+void PeachyPrintState::externalTrigger(uint8_t state){
+	m_printStates[state].externalTriggered=1;
+}
+
+void PeachyPrintState::updateHeightSteps(uint8_t state,int32_t steps){
+	m_printStates[state].absoluteHeight_steps=steps;
+}
+
+uint8_t PeachyPrintState::getState(){
+	return m_printState;	
+}
+
 
 void PeachyPrintState::handlePrintStates(){
 	pictureHandler();
@@ -119,10 +131,10 @@ void PeachyPrintState::handleStartPrintState(){
 		if (m_finished_state) {
 			//This should be a NAND... deMorgan another day
 			if (m_printStates[m_printState].externalTrigger == true ){
-				if (m_external_triggered){
+				if (m_printStates[m_printState].externalTriggered){
 					Serial.write("got external Trigger!\n");
 					m_finished_state=false;
-					m_external_triggered=0;
+					m_printStates[m_printState].externalTriggered=0;
 					update_trig_count=1;
 					taken_during_picture=0;
 					taken_before_picture=0;
@@ -143,7 +155,6 @@ void PeachyPrintState::handleStartPrintState(){
 		//Else kick off the next state (when we are done moving to it)
 		else if (g_Stepper.getDirection() == STEPPER_STABLE)  {
 			if (update_trig_count == 1){
-				m_external_triggered=false; //Zero the external trigger every time we update the trig count
 				update_trig_count = 0;
 				g_Flagger.updateTrigCount(m_flagger_id_state, m_printStates[m_printState].delay_ticks);
 			}

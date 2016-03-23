@@ -2,6 +2,7 @@
 
 //externs
 extern PeachyStepper g_Stepper;
+extern PeachyPrintState g_PrintState;
 extern uint8_t g_Serial_starved;
 extern uint16_t g_Serial_starved_count;
 extern double g_layer_float;
@@ -9,7 +10,6 @@ extern double g_layer_float;
 //globals
 uint8_t g_dripper_state = OFF;
 uint8_t g_layer_state = OFF;
-double  g_layer_float = 0.0;
 
 void serialDrip(uint8_t state){
 	g_dripper_state=state;
@@ -22,13 +22,13 @@ void serialLayer(uint8_t state){
 void serialPrintDone(){
 	//dunno what to do here? return to zero?
 	findUpperLimit();
+	g_Stepper.stop();
+	g_PrintState.stop();
 }
 
 void nextLayer(){
 	g_layer_float-=STEPS_PER_LAYER;
-	Serial.println(g_layer_float);
-	Serial.println(STEPS_PER_LAYER);
-	g_Stepper.moveTo((int32_t)g_layer_float);
+	g_PrintState.updateHeightSteps(PRINT_STATE_PRINTING,(int32_t)g_layer_float); //once it's ready also trigger end of current layer
 }
 
 void sendHello(){
@@ -43,11 +43,11 @@ void handleChar(){
 		switch(serial_data){
 			case '7':
 				//DRIP ON
-				serialDrip(ON);
+				//serialDrip(ON);
 				break;
 			case '8':
 				//DRIP OFF
-				serialDrip(OFF);
+				//serialDrip(OFF);
 				break;
 			case 'S':
 				//LAYER STARTED
