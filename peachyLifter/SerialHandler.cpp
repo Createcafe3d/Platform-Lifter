@@ -11,10 +11,12 @@ extern PeachyPrintState g_PrintState;
 extern uint8_t g_Serial_starved;
 extern uint16_t g_Serial_starved_count;
 extern double g_layer_float;
+extern uint8_t g_drips_requested;
 
 //globals
 uint8_t g_dripper_state = OFF;
 uint8_t g_layer_state = OFF;
+uint8_t g_first_drip = 0;
 
 void serialDrip(uint8_t state){
 	g_dripper_state=state;
@@ -29,7 +31,7 @@ void serialPrintDone(){
 	g_Stepper.stop();
 	g_PrintState.stop();
 	findUpperLimit();
-	g_PrintState.start(0);
+	initializePrintStates();
 }
 
 void nextLayer(){
@@ -54,6 +56,13 @@ void sendHello(){
 	Serial.write("OK\n");
 }
 
+void oneDrip(){
+	if (g_first_drip==0){
+		g_first_drip=1;
+		g_drips_requested+=1;
+	}
+}
+
 void handleChar(){
 	uint8_t serial_data;
 
@@ -76,6 +85,7 @@ void handleChar(){
 				//LAYER ENDED
 				serialLayer(OFF);
 				nextLayer();
+				oneDrip();
 				//break;
 			case 'H':
 				//NEXT LAYER

@@ -64,7 +64,6 @@ void startButtonHandler(){
 		Serial.write("START\n");
 		g_PrintState.start(0); //Start it if it isn't already moving.
 		g_PrintState.externalTrigger();
-		g_drips_requested=1;
 	}
 }
 
@@ -126,7 +125,7 @@ void dripHandler(){
 		//Send the drips to start the layer
 		if ((sent_drips == 0) & (g_PrintState.getState()==PRINT_STATE_PRINTING)){
 			sent_drips=1;
-			g_drips_requested=2;
+			g_drips_requested+=2;
 		}
 		else if (g_PrintState.getState()!=PRINT_STATE_PRINTING){
 			sent_drips=0;

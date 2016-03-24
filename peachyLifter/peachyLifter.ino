@@ -144,7 +144,7 @@ void initializePrintStates(){
 			false, //photo after delay (true|false)
 			false);//wait for an external trigger? (ie: layer done message)
 
-	//g_PrintState.printStates();
+	g_PrintState.start(0);
 }
 
 void findUpperLimit(){
