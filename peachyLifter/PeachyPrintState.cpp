@@ -20,6 +20,11 @@ void PeachyPrintState::setResinHeight(int32_t height){
 	Serial.println(m_resin_height_steps);
 }
 
+int32_t PeachyPrintState::getStateHeight(uint8_t state){
+	int32_t return_thing = m_printStates[state].absoluteHeight_steps;
+	return return_thing;
+}
+
 void PeachyPrintState::start(){
 	g_Flagger.enable(m_flagger_id_state);
 }

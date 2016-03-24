@@ -54,6 +54,8 @@ class PeachyPrintState
 		void stop();
 		void start();
 
+		int32_t getStateHeight(uint8_t state=0);
+
 		//Steps to print:
 		//1) DRAWING: draw a layer
 		//2) Raise print all the way up - Pictures

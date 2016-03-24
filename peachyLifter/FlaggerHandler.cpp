@@ -82,6 +82,7 @@ void buttonHandler(){
 			g_system_state=STATE_NORMAL;
 			g_Stepper.limited(0);
 			findUpperLimit();
+			g_PrintState.start(0);
 		}
 		//Set Height Button (blue)
 		if (g_system_state == STATE_NORMAL){

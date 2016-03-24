@@ -26,15 +26,27 @@ void serialLayer(uint8_t state){
 
 void serialPrintDone(){
 	//dunno what to do here? return to zero?
-	findUpperLimit();
 	g_Stepper.stop();
 	g_PrintState.stop();
+	findUpperLimit();
+	g_PrintState.start(0);
 }
 
 void nextLayer(){
+	int32_t tmp_height_steps;
 	g_layer_float-=STEPS_PER_LAYER;
 	g_PrintState.updateHeightSteps(PRINT_STATE_PRINTING,(int32_t)g_layer_float); //once it's ready also trigger end of current layer
 	g_PrintState.updateHeightSteps(PRINT_STATE_PREPRINTING,(int32_t)g_layer_float); //once it's ready also trigger end of current layer
+
+	tmp_height_steps = g_PrintState.getStateHeight(PRINT_STATE_SUBMERGING);
+	g_PrintState.updateHeightSteps(PRINT_STATE_SUBMERGING,tmp_height_steps-STEPS_PER_LAYER);
+
+	tmp_height_steps = g_PrintState.getStateHeight(PRINT_STATE_LIFTING);
+	g_PrintState.updateHeightSteps(PRINT_STATE_LIFTING,tmp_height_steps-STEPS_PER_LAYER);
+
+	tmp_height_steps = g_PrintState.getStateHeight(PRINT_STATE_FLOWING);
+	g_PrintState.updateHeightSteps(PRINT_STATE_FLOWING,tmp_height_steps-STEPS_PER_LAYER);
+
 	g_PrintState.externalTrigger(PRINT_STATE_PRINTING);
 }
 
