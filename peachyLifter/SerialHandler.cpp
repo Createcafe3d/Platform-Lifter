@@ -16,7 +16,6 @@ extern uint8_t g_drips_requested;
 //globals
 uint8_t g_dripper_state = OFF;
 uint8_t g_layer_state = OFF;
-uint8_t g_first_drip = 0;
 
 void serialDrip(uint8_t state){
 	g_dripper_state=state;
@@ -56,11 +55,8 @@ void sendHello(){
 	Serial.write("OK\n");
 }
 
-void oneDrip(){
-	if (g_first_drip==0){
-		g_first_drip=1;
-		g_drips_requested+=1;
-	}
+void initialDrips(){
+	g_drips_requested+=DRIPS_AT_START;
 }
 
 void handleChar(){
@@ -85,19 +81,23 @@ void handleChar(){
 				//LAYER ENDED
 				serialLayer(OFF);
 				nextLayer();
-				oneDrip();
 				//break;
 			case 'H':
 				//NEXT LAYER
 				//nextLayer();
 				break;
+			case 'B':
+				//BEGIN
+				serialPrintDone();
+				g_PrintState.start(0);
+				initialDrips();
 			case 'D':
 				//it gave me the D .... -_-
 				sendHello();
 				break;
 			case 'Z':
-				serialPrintDone();
 				//PRINT ENDED
+				serialPrintDone();
 				break;
 		}
 	}

@@ -125,7 +125,7 @@ void dripHandler(){
 		//Send the drips to start the layer
 		if ((sent_drips == 0) & (g_PrintState.getState()==PRINT_STATE_PRINTING)){
 			sent_drips=1;
-			g_drips_requested+=2;
+			g_drips_requested+=DRIPS_PER_LAYER;
 		}
 		else if (g_PrintState.getState()!=PRINT_STATE_PRINTING){
 			sent_drips=0;

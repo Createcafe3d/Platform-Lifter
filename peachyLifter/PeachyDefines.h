@@ -42,9 +42,11 @@
 
 #define MAX_NUM_FLAGS 16
 
-#define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
+#define DRIPS_PER_LAYER 2 //Number of drips sent at begining of each layer
+#define DRIPS_AT_START 1 //Number of drips to send when starting a print, one time
 #define LIMIT_SWITCH_BUFFER_STEPS 500 //Steps down after hitting limit switch
 
+#define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
 //Must be an integer less than 64 Because:(10 bit a/d * ANALOG_SCALER) -> uint16
 //How much to multiply up the Analog reading by. Analog values range from 0->1023
 #define ANALOG_SCALER 3 //Default 3

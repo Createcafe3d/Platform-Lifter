@@ -11,6 +11,7 @@ void serialDrip(uint8_t state);
 void serialLayer(uint8_t state);
 void serialPrintDone();
 void nextLayer();
+void initialDrips();
 
 void sendHello();
 void handleChar();
