@@ -46,7 +46,10 @@
 #define DRIPS_AT_START 1 //Number of drips to send when starting a print, one time
 #define LIMIT_SWITCH_BUFFER_STEPS 500 //Steps down after hitting limit switch
 
-#define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles)
+//Drips are defined as three or more: 0->3.3V edges within about 5ms.
+//Once a drip is detected there is a ~100ms dead time before it can register another drip
+#define DRIP_TOGGLES 8 //Number of half cycles (on-off is 2 half cycles) per a drip
+
 //Must be an integer less than 64 Because:(10 bit a/d * ANALOG_SCALER) -> uint16
 //How much to multiply up the Analog reading by. Analog values range from 0->1023
 #define ANALOG_SCALER 3 //Default 3

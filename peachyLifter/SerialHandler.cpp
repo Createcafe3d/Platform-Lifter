@@ -89,7 +89,8 @@ void handleChar(){
 			case 'B':
 				//BEGIN
 				serialPrintDone();
-				g_PrintState.start(0);
+				g_PrintState.start(0); //Start at state 0
+				g_PrintState.externalTrigger(); //send it an external trigger to start
 				initialDrips();
 			case 'D':
 				//it gave me the D .... -_-
